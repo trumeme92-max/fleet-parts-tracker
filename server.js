@@ -220,10 +220,12 @@ app.post("/api/auth/login", async (req, res) => {
     res.json({
       token,
       user: {
+        _id: user._id,
         id: user._id,
         username: user.username,
         role: user.role,
         name: user.name,
+        isActive: user.isActive,
       },
     });
   } catch (error) {
@@ -265,6 +267,7 @@ app.post(
         email,
         phone,
         createdBy: req.user.userId,
+        isActive: true,
       });
 
       await user.save();
@@ -272,12 +275,23 @@ app.post(
         req.user.userId,
         req.user.username,
         "CREATE_USER",
-        "user",
-        user._id,
+        "User",
+        user.username,
         { username, role },
       );
 
-      res.status(201).json({ message: "User created", userId: user._id });
+      res.status(201).json({
+        message: "User created",
+        userId: user._id,
+        user: {
+          _id: user._id,
+          username: user.username,
+          role: user.role,
+          name: user.name,
+          isActive: user.isActive,
+          createdAt: user.createdAt,
+        },
+      });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -301,7 +315,50 @@ app.get(
   },
 );
 
-// Update user status
+// Update user status (Enable/Disable) - PATCH method for frontend compatibility
+app.patch(
+  "/api/users/:id",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      const { isActive } = req.body;
+
+      // Prevent disabling yourself
+      if (req.params.id === req.user.userId && isActive === false) {
+        return res
+          .status(400)
+          .json({ error: "Cannot disable your own account" });
+      }
+
+      const user = await User.findByIdAndUpdate(
+        req.params.id,
+        { isActive },
+        { new: true },
+      ).select("-password");
+
+      if (!user) return res.status(404).json({ error: "User not found" });
+
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        isActive ? "USER_ENABLED" : "USER_DISABLED",
+        "User",
+        user.username,
+        { isActive },
+      );
+
+      res.json({
+        message: `User ${isActive ? "enabled" : "disabled"} successfully`,
+        user,
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// Keep the old PUT endpoint for backward compatibility
 app.put(
   "/api/users/:id/status",
   authenticate,
@@ -309,8 +366,60 @@ app.put(
   async (req, res) => {
     try {
       const { isActive } = req.body;
+
+      if (req.params.id === req.user.userId && isActive === false) {
+        return res
+          .status(400)
+          .json({ error: "Cannot disable your own account" });
+      }
+
       await User.findByIdAndUpdate(req.params.id, { isActive });
+
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        isActive ? "USER_ENABLED" : "USER_DISABLED",
+        "User",
+        req.params.id,
+        { isActive },
+      );
+
       res.json({ message: "User updated" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// Delete user permanently
+app.delete(
+  "/api/users/:id",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      // Prevent deleting yourself
+      if (req.params.id === req.user.userId) {
+        return res
+          .status(400)
+          .json({ error: "Cannot delete your own account" });
+      }
+
+      const user = await User.findById(req.params.id);
+      if (!user) return res.status(404).json({ error: "User not found" });
+
+      await User.findByIdAndDelete(req.params.id);
+
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        "USER_DELETED",
+        "User",
+        user.username,
+        { deletedUser: user.username, role: user.role },
+      );
+
+      res.json({ message: "User deleted permanently" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -440,13 +549,16 @@ app.delete(
   requireRole(["admin"]),
   async (req, res) => {
     try {
+      const part = await Part.findById(req.params.id);
+      if (!part) return res.status(404).json({ error: "Part not found" });
+
       await Part.findByIdAndDelete(req.params.id);
       await logActivity(
         req.user.userId,
         req.user.username,
         "DELETE_PART",
-        "part",
-        req.params.id,
+        "Part",
+        part.partNumber,
         {},
       );
       res.json({ message: "Part deleted" });
@@ -513,13 +625,36 @@ app.delete(
   requireRole(["admin"]),
   async (req, res) => {
     try {
-      const hasRepairs = await Repair.findOne({ truckId: req.params.id });
-      if (hasRepairs) {
+      const truck = await Truck.findById(req.params.id);
+      if (!truck) return res.status(404).json({ error: "Vehicle not found" });
+
+      // Check for repairs but allow force delete via query param
+      const hasRepairs = await Repair.findOne({ truckId: truck.truckId });
+      if (hasRepairs && !req.query.force) {
         return res
           .status(400)
-          .json({ error: "Cannot delete vehicle with repair history" });
+          .json({
+            error:
+              "Vehicle has repair history. Use ?force=true to delete anyway.",
+          });
       }
+
+      // Delete repairs if force deleting
+      if (hasRepairs && req.query.force) {
+        await Repair.deleteMany({ truckId: truck.truckId });
+      }
+
       await Truck.findByIdAndDelete(req.params.id);
+
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        "DELETE_TRUCK",
+        "Truck",
+        truck.truckId,
+        { force: !!req.query.force },
+      );
+
       res.json({ message: "Vehicle deleted" });
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -536,7 +671,19 @@ app.get("/api/repairs", authenticate, async (req, res) => {
       query.mechanicId = req.user.userId;
     }
     const repairs = await Repair.find(query).sort({ date: -1 }).limit(100);
-    res.json(repairs);
+
+    // Enrich with truck names
+    const repairsWithTruckInfo = await Promise.all(
+      repairs.map(async (r) => {
+        const truck = await Truck.findOne({ truckId: r.truckId });
+        return {
+          ...r.toObject(),
+          truckName: truck ? truck.name : r.truckId,
+        };
+      }),
+    );
+
+    res.json(repairsWithTruckInfo);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -548,53 +695,96 @@ app.post(
   requireRole(["admin", "mechanic"]),
   async (req, res) => {
     try {
-      const truck = await Truck.findOne({ truckId: req.body.truckId });
+      const {
+        truckId,
+        date,
+        issue,
+        laborCost,
+        partId,
+        quantityUsed,
+        mechanic,
+        notes,
+      } = req.body;
+
+      // Verify truck exists
+      const truck = await Truck.findOne({ truckId });
       if (!truck) return res.status(404).json({ error: "Vehicle not found" });
 
       let partsTotalCost = 0;
-      for (const used of req.body.partsUsed || []) {
-        const part = await Part.findById(used.partId);
-        if (part) {
-          used.unitCost = part.cost || 0;
-          used.totalCost = used.unitCost * used.quantity;
-          used.partNumber = part.partNumber;
-          partsTotalCost += used.totalCost;
+      const partsUsed = [];
 
-          part.quantity -= used.quantity;
+      // Handle single part from frontend form
+      if (partId && quantityUsed > 0) {
+        const part = await Part.findById(partId);
+        if (part) {
+          if (part.quantity < quantityUsed) {
+            return res.status(400).json({
+              error: `Insufficient stock for ${part.partNumber}. Only ${part.quantity} available`,
+            });
+          }
+
+          const unitCost = part.cost || 0;
+          const totalCost = unitCost * quantityUsed;
+
+          partsUsed.push({
+            partId: part._id,
+            partNumber: part.partNumber,
+            quantity: quantityUsed,
+            unitCost: unitCost,
+            totalCost: totalCost,
+          });
+
+          partsTotalCost = totalCost;
+
+          // Update inventory
+          part.quantity -= quantityUsed;
           await part.save();
         }
       }
 
-      const laborCost = (req.body.laborHours || 0) * (req.body.laborRate || 75);
-      const totalCost = partsTotalCost + laborCost;
+      // Calculate costs
+      const laborCostNum = parseFloat(laborCost) || 0;
+      const totalCost = partsTotalCost + laborCostNum;
 
       const repair = new Repair({
-        ...req.body,
-        truckName: truck.name,
+        truckId,
+        date: date || new Date(),
+        issue,
+        partsUsed,
         partsTotalCost,
-        laborCost,
+        laborCost: laborCostNum,
+        laborHours: laborCostNum / 75, // Assuming $75/hr rate
+        laborRate: 75,
         totalCost,
+        mechanic: mechanic || req.user.username,
         mechanicId: req.user.userId,
-        mechanic: req.body.mechanic || req.user.username,
+        notes,
+        truckName: truck.name,
+        status: "completed",
       });
 
       await repair.save();
-      await updateTruckCosts(req.body.truckId);
+
+      // Update truck stats
+      await updateTruckCosts(truckId);
 
       await logActivity(
         req.user.userId,
         req.user.username,
         "CREATE_REPAIR",
-        "repair",
+        "Repair",
         repair._id,
         {
-          truckId: req.body.truckId,
+          truckId,
+          truckName: truck.name,
           totalCost,
+          issue: issue.substring(0, 50),
         },
       );
 
       res.status(201).json(repair);
     } catch (error) {
+      console.error("Repair creation error:", error);
       res.status(400).json({ error: error.message });
     }
   },
@@ -608,14 +798,28 @@ app.delete(
     try {
       const repair = await Repair.findById(req.params.id);
       if (repair) {
-        for (const used of repair.partsUsed) {
-          await Part.findByIdAndUpdate(used.partId, {
-            $inc: { quantity: used.quantity },
-          });
+        // Return parts to inventory
+        for (const used of repair.partsUsed || []) {
+          if (used.partId) {
+            await Part.findByIdAndUpdate(used.partId, {
+              $inc: { quantity: used.quantity },
+            });
+          }
         }
-        await updateTruckCosts(repair.truckId);
+
+        const truckId = repair.truckId;
+        await Repair.findByIdAndDelete(req.params.id);
+        await updateTruckCosts(truckId);
+
+        await logActivity(
+          req.user.userId,
+          req.user.username,
+          "DELETE_REPAIR",
+          "Repair",
+          req.params.id,
+          { truckId },
+        );
       }
-      await Repair.findByIdAndDelete(req.params.id);
       res.json({ message: "Repair deleted" });
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -680,17 +884,22 @@ app.listen(PORT, "0.0.0.0", () => {
 
 // Create default admin if no users exist
 const createDefaultAdmin = async () => {
-  const count = await User.countDocuments();
-  if (count === 0) {
-    const hashedPassword = await bcrypt.hash("admin123", 10);
-    await User.create({
-      username: "admin",
-      password: hashedPassword,
-      role: "admin",
-      name: "System Administrator",
-    });
-    console.log("Default admin created: username=admin, password=admin123");
-    console.log("Please change this password after first login!");
+  try {
+    const count = await User.countDocuments();
+    if (count === 0) {
+      const hashedPassword = await bcrypt.hash("admin123", 10);
+      await User.create({
+        username: "admin",
+        password: hashedPassword,
+        role: "admin",
+        name: "System Administrator",
+        isActive: true,
+      });
+      console.log("Default admin created: username=admin, password=admin123");
+      console.log("Please change this password after first login!");
+    }
+  } catch (err) {
+    console.error("Error creating default admin:", err);
   }
 };
 
