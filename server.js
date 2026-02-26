@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const compression = require("compression");
 const path = require("path");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
@@ -12,13 +14,56 @@ app.use(compression());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("/health", (req, res) => res.status(200).json({ status: "healthy" }));
+// JWT Authentication Middleware
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token)
+    return res.status(401).json({ error: "Access denied. No token provided." });
 
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(400).json({ error: "Invalid token" });
+  }
+};
+
+// Role-based access control
+const requireRole = (roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role)) {
+    return res
+      .status(403)
+      .json({ error: "Access denied. Insufficient permissions." });
+  }
+  next();
+};
+
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Error:", err));
 
+// USER SCHEMA (New)
+const UserSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: {
+    type: String,
+    enum: ["admin", "mechanic", "driver", "viewer"],
+    default: "mechanic",
+  },
+  name: String,
+  email: String,
+  phone: String,
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  createdAt: { type: Date, default: Date.now },
+  lastLogin: Date,
+  isActive: { type: Boolean, default: true },
+});
+
+// PART SCHEMA
 const PartSchema = new mongoose.Schema({
   partNumber: { type: String, required: true, unique: true },
   description: { type: String, required: true },
@@ -28,61 +73,310 @@ const PartSchema = new mongoose.Schema({
   location: String,
   cost: { type: Number, default: 0 },
   supplier: String,
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   updatedAt: { type: Date, default: Date.now },
 });
 
+// TRUCK SCHEMA with cost tracking
 const TruckSchema = new mongoose.Schema({
   truckId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   type: { type: String, enum: ["truck", "trailer"], required: true },
   vin: String,
+  year: Number,
+  make: String,
+  model: String,
   notes: String,
+  status: {
+    type: String,
+    enum: ["active", "maintenance", "retired"],
+    default: "active",
+  },
+  totalRepairCost: { type: Number, default: 0 },
+  totalPartsCost: { type: Number, default: 0 },
+  totalLaborCost: { type: Number, default: 0 },
+  repairCount: { type: Number, default: 0 },
+  lastServiceDate: Date,
+  nextServiceDue: Date,
+  createdAt: { type: Date, default: Date.now },
 });
 
+// REPAIR SCHEMA with cost breakdown
 const RepairSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   truckId: { type: String, required: true },
   truckName: String,
   issue: { type: String, required: true },
-  partsUsed: [{ partId: String, partNumber: String, quantity: Number }],
+  partsUsed: [
+    {
+      partId: String,
+      partNumber: String,
+      quantity: Number,
+      unitCost: Number,
+      totalCost: Number,
+    },
+  ],
+  partsTotalCost: { type: Number, default: 0 },
   laborHours: Number,
+  laborRate: { type: Number, default: 75 },
+  laborCost: { type: Number, default: 0 },
+  totalCost: { type: Number, default: 0 },
   mechanic: String,
+  mechanicId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   notes: String,
   photos: [String],
-  totalCost: { type: Number, default: 0 },
+  status: {
+    type: String,
+    enum: ["completed", "in-progress", "scheduled"],
+    default: "completed",
+  },
+  createdAt: { type: Date, default: Date.now },
 });
 
+// ACTIVITY LOG SCHEMA
+const ActivityLogSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  username: String,
+  action: String,
+  entityType: String,
+  entityId: String,
+  details: Object,
+  timestamp: { type: Date, default: Date.now },
+});
+
+const User = mongoose.model("User", UserSchema);
 const Part = mongoose.model("Part", PartSchema);
 const Truck = mongoose.model("Truck", TruckSchema);
 const Repair = mongoose.model("Repair", RepairSchema);
+const ActivityLog = mongoose.model("ActivityLog", ActivityLogSchema);
 
-app.get("/api/stats", async (req, res) => {
+// Helper: Log activity
+const logActivity = async (
+  userId,
+  username,
+  action,
+  entityType,
+  entityId,
+  details,
+) => {
+  await ActivityLog.create({
+    userId,
+    username,
+    action,
+    entityType,
+    entityId,
+    details,
+  });
+};
+
+// Helper: Update truck costs
+const updateTruckCosts = async (truckId) => {
+  const repairs = await Repair.find({ truckId });
+  const totalPartsCost = repairs.reduce(
+    (sum, r) => sum + (r.partsTotalCost || 0),
+    0,
+  );
+  const totalLaborCost = repairs.reduce(
+    (sum, r) => sum + (r.laborCost || 0),
+    0,
+  );
+  const totalRepairCost = repairs.reduce(
+    (sum, r) => sum + (r.totalCost || 0),
+    0,
+  );
+
+  await Truck.findOneAndUpdate(
+    { truckId },
+    {
+      totalPartsCost,
+      totalLaborCost,
+      totalRepairCost,
+      repairCount: repairs.length,
+    },
+  );
+};
+
+// AUTH ROUTES
+
+// Login
+app.post("/api/auth/login", async (req, res) => {
   try {
-    const [totalParts, lowStock, fleetSize] = await Promise.all([
-      Part.countDocuments(),
-      Part.countDocuments({ $expr: { $lte: ["$quantity", "$minStock"] } }),
-      Truck.countDocuments(),
-    ]);
+    const { username, password } = req.body;
+    const user = await User.findOne({ username, isActive: true });
 
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    const repairs = await Repair.find({ date: { $gte: startOfMonth } });
-
-    let monthCost = 0;
-    for (const repair of repairs) {
-      for (const used of repair.partsUsed) {
-        const part = await Part.findById(used.partId);
-        if (part) monthCost += (part.cost || 0) * used.quantity;
-      }
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    res.json({ totalParts, lowStock, fleetSize, monthCost });
+    user.lastLogin = new Date();
+    await user.save();
+
+    const token = jwt.sign(
+      { userId: user._id, username: user.username, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" },
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        role: user.role,
+        name: user.name,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.get("/api/parts", async (req, res) => {
+// Get current user
+app.get("/api/auth/me", authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select("-password");
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// USER MANAGEMENT (Admin Only)
+
+// Create user
+app.post(
+  "/api/users",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      const { username, password, role, name, email, phone } = req.body;
+
+      const existingUser = await User.findOne({ username });
+      if (existingUser)
+        return res.status(400).json({ error: "Username already exists" });
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new User({
+        username,
+        password: hashedPassword,
+        role,
+        name,
+        email,
+        phone,
+        createdBy: req.user.userId,
+      });
+
+      await user.save();
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        "CREATE_USER",
+        "user",
+        user._id,
+        { username, role },
+      );
+
+      res.status(201).json({ message: "User created", userId: user._id });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+);
+
+// Get all users
+app.get(
+  "/api/users",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      const users = await User.find()
+        .select("-password")
+        .sort({ createdAt: -1 });
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// Update user status
+app.put(
+  "/api/users/:id/status",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      const { isActive } = req.body;
+      await User.findByIdAndUpdate(req.params.id, { isActive });
+      res.json({ message: "User updated" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// STATS & DASHBOARD
+
+app.get("/api/stats", authenticate, async (req, res) => {
+  try {
+    const [totalParts, lowStock, fleetSize] = await Promise.all([
+      Part.countDocuments(),
+      Part.countDocuments({ $expr: { $lte: ["$quantity", "$minStock"] } }),
+      Truck.countDocuments({ status: "active" }),
+    ]);
+
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+
+    const thisMonthRepairs = await Repair.find({
+      date: { $gte: startOfMonth },
+    });
+    const monthCost = thisMonthRepairs.reduce(
+      (sum, r) => sum + (r.totalCost || 0),
+      0,
+    );
+
+    const topVehicles = await Truck.find()
+      .sort({ totalRepairCost: -1 })
+      .limit(5)
+      .select("truckId name totalRepairCost repairCount");
+
+    res.json({
+      totalParts,
+      lowStock,
+      fleetSize,
+      monthCost,
+      topVehicles,
+      userRole: req.user.role,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Vehicle-specific stats
+app.get("/api/vehicles/:truckId/stats", authenticate, async (req, res) => {
+  try {
+    const { truckId } = req.params;
+    const truck = await Truck.findOne({ truckId });
+    if (!truck) return res.status(404).json({ error: "Vehicle not found" });
+
+    const repairs = await Repair.find({ truckId }).sort({ date: -1 });
+
+    res.json({
+      truck,
+      repairs,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PARTS API
+
+app.get("/api/parts", authenticate, async (req, res) => {
   try {
     const parts = await Part.find().sort({ updatedAt: -1 });
     res.json(parts);
@@ -91,27 +385,80 @@ app.get("/api/parts", async (req, res) => {
   }
 });
 
-app.post("/api/parts", async (req, res) => {
-  try {
-    req.body.partNumber = req.body.partNumber.toUpperCase();
-    const part = new Part(req.body);
-    await part.save();
-    res.status(201).json(part);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+app.post(
+  "/api/parts",
+  authenticate,
+  requireRole(["admin", "mechanic"]),
+  async (req, res) => {
+    try {
+      req.body.partNumber = req.body.partNumber.toUpperCase();
+      const part = new Part({ ...req.body, createdBy: req.user.userId });
+      await part.save();
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        "CREATE_PART",
+        "part",
+        part._id,
+        req.body,
+      );
+      res.status(201).json(part);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+);
 
-app.delete("/api/parts/:id", async (req, res) => {
-  try {
-    await Part.findByIdAndDelete(req.params.id);
-    res.json({ message: "Part deleted" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+app.put(
+  "/api/parts/:id",
+  authenticate,
+  requireRole(["admin", "mechanic"]),
+  async (req, res) => {
+    try {
+      req.body.updatedAt = Date.now();
+      const part = await Part.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+      });
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        "UPDATE_PART",
+        "part",
+        part._id,
+        req.body,
+      );
+      res.json(part);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+);
 
-app.get("/api/trucks", async (req, res) => {
+app.delete(
+  "/api/parts/:id",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      await Part.findByIdAndDelete(req.params.id);
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        "DELETE_PART",
+        "part",
+        req.params.id,
+        {},
+      );
+      res.json({ message: "Part deleted" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// TRUCKS API
+
+app.get("/api/trucks", authenticate, async (req, res) => {
   try {
     const trucks = await Truck.find().sort({ createdAt: -1 });
     res.json(trucks);
@@ -120,90 +467,231 @@ app.get("/api/trucks", async (req, res) => {
   }
 });
 
-app.post("/api/trucks", async (req, res) => {
-  try {
-    req.body.truckId = req.body.truckId.toUpperCase();
-    const truck = new Truck(req.body);
-    await truck.save();
-    res.status(201).json(truck);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+app.post(
+  "/api/trucks",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      req.body.truckId = req.body.truckId.toUpperCase();
+      const truck = new Truck(req.body);
+      await truck.save();
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        "CREATE_TRUCK",
+        "truck",
+        truck._id,
+        req.body,
+      );
+      res.status(201).json(truck);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+);
 
-app.delete("/api/trucks/:id", async (req, res) => {
-  try {
-    await Truck.findByIdAndDelete(req.params.id);
-    res.json({ message: "Vehicle deleted" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+app.put(
+  "/api/trucks/:id",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      const truck = await Truck.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+      });
+      res.json(truck);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+);
 
-app.get("/api/repairs", async (req, res) => {
+app.delete(
+  "/api/trucks/:id",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      const hasRepairs = await Repair.findOne({ truckId: req.params.id });
+      if (hasRepairs) {
+        return res
+          .status(400)
+          .json({ error: "Cannot delete vehicle with repair history" });
+      }
+      await Truck.findByIdAndDelete(req.params.id);
+      res.json({ message: "Vehicle deleted" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// REPAIRS API
+
+app.get("/api/repairs", authenticate, async (req, res) => {
   try {
-    const repairs = await Repair.find().sort({ date: -1 });
+    let query = {};
+    if (req.user.role === "mechanic") {
+      query.mechanicId = req.user.userId;
+    }
+    const repairs = await Repair.find(query).sort({ date: -1 }).limit(100);
     res.json(repairs);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.post("/api/repairs", async (req, res) => {
-  try {
-    let totalCost = 0;
-    const truck = await Truck.findOne({ truckId: req.body.truckId });
+app.post(
+  "/api/repairs",
+  authenticate,
+  requireRole(["admin", "mechanic"]),
+  async (req, res) => {
+    try {
+      const truck = await Truck.findOne({ truckId: req.body.truckId });
+      if (!truck) return res.status(404).json({ error: "Vehicle not found" });
 
-    for (const used of req.body.partsUsed || []) {
-      const part = await Part.findById(used.partId);
-      if (part) {
-        totalCost += (part.cost || 0) * used.quantity;
-        part.quantity -= used.quantity;
-        await part.save();
-        used.partNumber = part.partNumber;
+      let partsTotalCost = 0;
+      for (const used of req.body.partsUsed || []) {
+        const part = await Part.findById(used.partId);
+        if (part) {
+          used.unitCost = part.cost || 0;
+          used.totalCost = used.unitCost * used.quantity;
+          used.partNumber = part.partNumber;
+          partsTotalCost += used.totalCost;
+
+          part.quantity -= used.quantity;
+          await part.save();
+        }
       }
+
+      const laborCost = (req.body.laborHours || 0) * (req.body.laborRate || 75);
+      const totalCost = partsTotalCost + laborCost;
+
+      const repair = new Repair({
+        ...req.body,
+        truckName: truck.name,
+        partsTotalCost,
+        laborCost,
+        totalCost,
+        mechanicId: req.user.userId,
+        mechanic: req.body.mechanic || req.user.username,
+      });
+
+      await repair.save();
+      await updateTruckCosts(req.body.truckId);
+
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        "CREATE_REPAIR",
+        "repair",
+        repair._id,
+        {
+          truckId: req.body.truckId,
+          totalCost,
+        },
+      );
+
+      res.status(201).json(repair);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
     }
+  },
+);
 
-    const repair = new Repair({
-      ...req.body,
-      truckName: truck ? truck.name : req.body.truckId,
-      totalCost,
-    });
+app.delete(
+  "/api/repairs/:id",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      const repair = await Repair.findById(req.params.id);
+      if (repair) {
+        for (const used of repair.partsUsed) {
+          await Part.findByIdAndUpdate(used.partId, {
+            $inc: { quantity: used.quantity },
+          });
+        }
+        await updateTruckCosts(repair.truckId);
+      }
+      await Repair.findByIdAndDelete(req.params.id);
+      res.json({ message: "Repair deleted" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
 
-    await repair.save();
-    res.status(201).json(repair);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+// ACTIVITY LOGS (Admin)
+
+app.get(
+  "/api/activity-logs",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      const logs = await ActivityLog.find()
+        .sort({ timestamp: -1 })
+        .limit(100)
+        .populate("userId", "username name");
+      res.json(logs);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// EXPORT (Admin)
+
+app.get(
+  "/api/export",
+  authenticate,
+  requireRole(["admin"]),
+  async (req, res) => {
+    try {
+      const [parts, trucks, repairs, users] = await Promise.all([
+        Part.find(),
+        Truck.find(),
+        Repair.find(),
+        User.find().select("-password"),
+      ]);
+      res.json({ parts, trucks, repairs, users, exportDate: new Date() });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+// Health check
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "healthy", timestamp: new Date() });
 });
 
-app.delete("/api/repairs/:id", async (req, res) => {
-  try {
-    await Repair.findByIdAndDelete(req.params.id);
-    res.json({ message: "Repair deleted" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get("/api/export", async (req, res) => {
-  try {
-    const [parts, trucks, repairs] = await Promise.all([
-      Part.find(),
-      Truck.find(),
-      Repair.find(),
-    ]);
-    res.json({ parts, trucks, repairs, exportDate: new Date() });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
+// Serve frontend
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Secure Fleet Tracker running on port ${PORT}`);
 });
+
+// Create default admin if no users exist
+const createDefaultAdmin = async () => {
+  const count = await User.countDocuments();
+  if (count === 0) {
+    const hashedPassword = await bcrypt.hash("admin123", 10);
+    await User.create({
+      username: "admin",
+      password: hashedPassword,
+      role: "admin",
+      name: "System Administrator",
+    });
+    console.log("Default admin created: username=admin, password=admin123");
+    console.log("Please change this password after first login!");
+  }
+};
+
+createDefaultAdmin();

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FleetParts Tracker</title>
+    <title>Secure Fleet Tracker</title>
     <style>
       :root {
         --primary: #2563eb;
@@ -14,6 +14,7 @@
         --card: #ffffff;
         --text: #1f2937;
         --border: #e5e7eb;
+        --sidebar: #1f2937;
       }
       * {
         margin: 0;
@@ -27,63 +28,197 @@
         color: var(--text);
         line-height: 1.6;
       }
-      .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.95);
+
+      /* Login Page */
+      .login-container {
+        min-height: 100vh;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        z-index: 9999;
+        background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
       }
-      .spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid var(--border);
-        border-top-color: var(--primary);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
+      .login-box {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
       }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
+      .login-title {
+        font-size: 1.875rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+      }
+      .login-subtitle {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 2rem;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 1rem;
+      }
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+        width: 100%;
+      }
+      .btn-primary:hover {
+        background: #1d4ed8;
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      .btn-secondary {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+      .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+
+      /* Main App Layout */
+      .app-container {
+        display: none;
+        min-height: 100vh;
+      }
+      .app-container.active {
+        display: flex;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 260px;
+        background: var(--sidebar);
+        color: white;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 100;
+      }
+      .sidebar-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #374151;
+      }
+      .sidebar-logo {
+        font-size: 1.25rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .user-info {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #374151;
+        font-size: 0.875rem;
+      }
+      .user-role {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-top: 0.25rem;
+      }
+      .role-admin {
+        background: var(--danger);
+      }
+      .role-mechanic {
+        background: var(--primary);
+      }
+      .role-driver {
+        background: var(--warning);
+        color: #000;
+      }
+      .role-viewer {
+        background: #6b7280;
+      }
+
+      .nav-menu {
+        padding: 1rem 0;
+      }
+      .nav-item {
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+      }
+      .nav-item:hover {
+        background: #374151;
+      }
+      .nav-item.active {
+        background: #374151;
+        border-left-color: var(--primary);
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-left: 260px;
+        padding: 2rem;
       }
       .header {
         background: var(--card);
-        border-bottom: 1px solid var(--border);
-        padding: 1rem 2rem;
+        padding: 1.5rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
-      .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--primary);
-      }
-      .status-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        background: #d1fae5;
-        color: var(--success);
-      }
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-      }
+
+      /* Stats Grid */
       .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
         margin-bottom: 2rem;
       }
       .stat-card {
@@ -99,93 +234,39 @@
       .stat-card.success {
         border-left-color: var(--success);
       }
+      .stat-card.info {
+        border-left-color: var(--warning);
+      }
       .stat-label {
         font-size: 0.875rem;
         color: #6b7280;
         text-transform: uppercase;
+        font-weight: 600;
       }
       .stat-value {
         font-size: 2rem;
         font-weight: bold;
         margin-top: 0.5rem;
       }
-      .stat-value.danger {
-        color: var(--danger);
-      }
-      .action-bar {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-      }
-      .btn {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 6px;
-        font-size: 1rem;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 500;
-      }
-      .btn-primary {
-        background: var(--primary);
-        color: white;
-      }
-      .btn-secondary {
-        background: var(--card);
-        color: var(--text);
-        border: 1px solid var(--border);
-      }
-      .btn-danger {
-        background: var(--danger);
-        color: white;
-      }
-      .btn-success {
-        background: var(--success);
-        color: white;
-      }
-      .btn-sm {
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-      }
-      .tabs {
-        display: flex;
-        border-bottom: 2px solid var(--border);
-        margin-bottom: 2rem;
-        background: var(--card);
-        padding: 0 2rem;
-        border-radius: 8px 8px 0 0;
-      }
-      .tab {
-        padding: 1rem 2rem;
-        cursor: pointer;
-        border-bottom: 2px solid transparent;
-        margin-bottom: -2px;
-        font-weight: 500;
-        color: #6b7280;
-      }
-      .tab.active {
-        color: var(--primary);
-        border-bottom-color: var(--primary);
-      }
-      .search-bar {
-        margin-bottom: 1.5rem;
-      }
-      .search-input {
-        width: 100%;
-        max-width: 400px;
-        padding: 0.75rem;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        font-size: 1rem;
-      }
-      .table-container {
+
+      /* Tables & Cards */
+      .card {
         background: var(--card);
         border-radius: 8px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         overflow: hidden;
+        margin-bottom: 2rem;
+      }
+      .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .card-title {
+        font-size: 1.125rem;
+        font-weight: 600;
       }
       table {
         width: 100%;
@@ -210,6 +291,7 @@
       .low-stock {
         background: #fef2f2 !important;
       }
+
       .badge {
         padding: 0.25rem 0.75rem;
         border-radius: 9999px;
@@ -224,6 +306,52 @@
         background: #bbf7d0;
         color: var(--success);
       }
+      .badge-warning {
+        background: #fde68a;
+        color: #92400e;
+      }
+
+      /* Vehicle Detail Page */
+      .vehicle-header {
+        background: var(--card);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+      .vehicle-title {
+        font-size: 1.875rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+      .vehicle-meta {
+        color: #6b7280;
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .cost-breakdown {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+      }
+      .cost-item {
+        text-align: center;
+      }
+      .cost-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
+      .cost-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--danger);
+      }
+
+      /* Modal */
       .modal-overlay {
         display: none;
         position: fixed;
@@ -235,12 +363,12 @@
         z-index: 1000;
         padding: 1rem;
         overflow-y: auto;
-      }
-      .modal-overlay.active {
-        display: flex;
         align-items: flex-start;
         justify-content: center;
         padding-top: 5vh;
+      }
+      .modal-overlay.active {
+        display: flex;
       }
       .modal {
         background: var(--card);
@@ -256,10 +384,6 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-      }
-      .modal-title {
-        font-size: 1.25rem;
-        font-weight: bold;
       }
       .modal-close {
         background: none;
@@ -278,142 +402,21 @@
         justify-content: flex-end;
         gap: 1rem;
       }
-      .form-group {
-        margin-bottom: 1rem;
-      }
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        font-size: 0.875rem;
-      }
-      input,
-      select,
-      textarea {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        font-size: 1rem;
-      }
+
       .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
       }
-      .repair-card {
-        background: var(--card);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border-left: 4px solid var(--primary);
+
+      .hidden {
+        display: none !important;
       }
-      .repair-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-      }
-      .repair-date {
-        font-weight: bold;
-        color: var(--primary);
-      }
-      .repair-truck {
-        font-size: 1.1rem;
-        font-weight: 600;
-      }
-      .repair-parts {
-        background: var(--bg);
-        padding: 0.75rem;
-        border-radius: 6px;
-        margin: 0.5rem 0;
-        font-size: 0.9rem;
-      }
-      .repair-photos {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-        flex-wrap: wrap;
-      }
-      .repair-photo {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 4px;
-        cursor: pointer;
-        border: 2px solid var(--border);
-      }
-      .fleet-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
-      }
-      .fleet-card {
-        background: var(--card);
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border-top: 4px solid var(--primary);
-      }
-      .fleet-card.trailer {
-        border-top-color: var(--warning);
-      }
-      .fleet-id {
-        font-size: 0.875rem;
-        color: #6b7280;
-        font-weight: 600;
-        text-transform: uppercase;
-      }
-      .fleet-name {
-        font-size: 1.25rem;
-        font-weight: bold;
-        margin: 0.5rem 0;
-      }
-      .fleet-type {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        background: var(--bg);
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-      }
-      .photo-upload {
-        border: 2px dashed var(--border);
-        border-radius: 6px;
-        padding: 2rem;
-        text-align: center;
-        cursor: pointer;
-      }
-      .photo-preview {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-        flex-wrap: wrap;
-      }
-      .photo-preview img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 4px;
-      }
-      .empty-state {
-        text-align: center;
-        padding: 3rem;
-        color: #6b7280;
-      }
-      .empty-state-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-      }
+
       .alert {
         padding: 1rem;
         border-radius: 6px;
         margin-bottom: 1rem;
-        display: none;
-      }
-      .alert.show {
-        display: block;
       }
       .alert-error {
         background: #fee2e2;
@@ -425,130 +428,345 @@
         color: var(--success);
         border: 1px solid #bbf7d0;
       }
+
       @media (max-width: 768px) {
-        .container {
-          padding: 1rem;
-        }
-        .stats-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .form-row {
-          grid-template-columns: 1fr;
-        }
-        .action-bar {
-          flex-direction: column;
-        }
-        .btn {
+        .sidebar {
           width: 100%;
-          justify-content: center;
+          position: relative;
+          height: auto;
         }
-        .fleet-grid {
-          grid-template-columns: 1fr;
+        .main-content {
+          margin-left: 0;
+        }
+        .app-container.active {
+          flex-direction: column;
         }
       }
     </style>
   </head>
   <body>
-    <div class="loading-overlay" id="loading">
-      <div class="spinner"></div>
-      <p style="margin-top: 1rem">Connecting to database...</p>
-    </div>
-
-    <header class="header">
-      <div class="logo">🔧 FleetParts Tracker</div>
-      <div style="display: flex; align-items: center; gap: 1rem">
-        <span class="status-badge" id="status">● Online</span>
-        <span style="font-size: 0.9rem; color: #6b7280">Railway Cloud</span>
-      </div>
-    </header>
-
-    <div class="container">
-      <div id="alerts"></div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Total Parts</div>
-          <div class="stat-value" id="stat-total">-</div>
+    <!-- Login Page -->
+    <div id="login-page" class="login-container">
+      <div class="login-box">
+        <div style="text-align: center; margin-bottom: 1.5rem">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem">🔧</div>
+          <h1 class="login-title">FleetParts Tracker</h1>
+          <p class="login-subtitle">Secure Fleet Management System</p>
         </div>
-        <div class="stat-card warning">
-          <div class="stat-label">Low Stock</div>
-          <div class="stat-value danger" id="stat-low">-</div>
+
+        <div id="login-error" class="alert alert-error hidden"></div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label>Username</label>
+            <input
+              type="text"
+              id="login-username"
+              required
+              placeholder="Enter username"
+            />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              id="login-password"
+              required
+              placeholder="Enter password"
+            />
+          </div>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            style="margin-top: 0.5rem"
+          >
+            Sign In
+          </button>
+        </form>
+
+        <div
+          style="
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+          "
+        >
+          <p><strong>Default Login:</strong></p>
+          <p>Username: <code>admin</code></p>
+          <p>Password: <code>admin123</code></p>
         </div>
-        <div class="stat-card success">
-          <div class="stat-label">Fleet Size</div>
-          <div class="stat-value" id="stat-fleet">-</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">This Month</div>
-          <div class="stat-value" id="stat-cost">-</div>
-        </div>
-      </div>
-
-      <div class="action-bar">
-        <button class="btn btn-primary" onclick="openModal('part-modal')">
-          + Add Part
-        </button>
-        <button class="btn btn-success" onclick="openRepairModal()">
-          🔧 Log Repair
-        </button>
-        <button class="btn btn-secondary" onclick="openModal('truck-modal')">
-          🚛 Add Vehicle
-        </button>
-        <button class="btn btn-secondary" onclick="exportData()">
-          💾 Export
-        </button>
-      </div>
-
-      <div class="tabs">
-        <div class="tab active" onclick="switchTab('parts', this)">Parts</div>
-        <div class="tab" onclick="switchTab('repairs', this)">Repairs</div>
-        <div class="tab" onclick="switchTab('fleet', this)">Fleet</div>
-      </div>
-
-      <div class="search-bar">
-        <input
-          type="text"
-          class="search-input"
-          id="search"
-          placeholder="Search..."
-          onkeyup="doSearch()"
-        />
-      </div>
-
-      <div id="tab-parts" class="tab-content">
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Part #</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Stock</th>
-                <th>Location</th>
-                <th>Cost</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="parts-list"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="tab-repairs" class="tab-content" style="display: none">
-        <div id="repairs-list"></div>
-      </div>
-
-      <div id="tab-fleet" class="tab-content" style="display: none">
-        <div class="fleet-grid" id="fleet-list"></div>
       </div>
     </div>
 
-    <!-- Part Modal -->
-    <div
-      id="part-modal"
-      class="modal-overlay"
-      onclick="if (event.target === this) closeModal('part-modal');"
-    >
+    <!-- Main App -->
+    <div id="app-container" class="app-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+            <span>🔧</span>
+            <span>FleetTracker</span>
+          </div>
+        </div>
+
+        <div class="user-info">
+          <div id="current-user-name" style="font-weight: 600">Loading...</div>
+          <span id="current-user-role" class="user-role">Loading...</span>
+        </div>
+
+        <nav class="nav-menu">
+          <div class="nav-item active" onclick="showPage('dashboard')">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" onclick="showPage('parts')">
+            <span>📦</span>
+            <span>Parts Inventory</span>
+          </div>
+          <div class="nav-item" onclick="showPage('repairs')">
+            <span>🔧</span>
+            <span>Repairs</span>
+          </div>
+          <div class="nav-item" onclick="showPage('fleet')">
+            <span>🚛</span>
+            <span>Fleet</span>
+          </div>
+          <div class="nav-item admin-only hidden" onclick="showPage('users')">
+            <span>👥</span>
+            <span>User Management</span>
+          </div>
+          <div class="nav-item admin-only hidden" onclick="showPage('logs')">
+            <span>📋</span>
+            <span>Activity Logs</span>
+          </div>
+          <div
+            class="nav-item"
+            onclick="logout()"
+            style="margin-top: 2rem; border-top: 1px solid #374151"
+          >
+            <span>🚪</span>
+            <span>Logout</span>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Alerts -->
+        <div id="app-alerts"></div>
+
+        <!-- Dashboard Page -->
+        <div id="page-dashboard" class="page">
+          <div class="header">
+            <div>
+              <h1 style="font-size: 1.5rem; font-weight: bold">Dashboard</h1>
+              <p style="color: #6b7280">Overview of your fleet operations</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem">
+              <button class="btn btn-secondary" onclick="exportData()">
+                📥 Export Data
+              </button>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Total Parts</div>
+              <div class="stat-value" id="stat-total-parts">-</div>
+            </div>
+            <div class="stat-card warning">
+              <div class="stat-label">Low Stock Alerts</div>
+              <div
+                class="stat-value"
+                id="stat-low-stock"
+                style="color: var(--danger)"
+              >
+                -
+              </div>
+            </div>
+            <div class="stat-card success">
+              <div class="stat-label">Active Fleet</div>
+              <div class="stat-value" id="stat-fleet-size">-</div>
+            </div>
+            <div class="stat-card info">
+              <div class="stat-label">This Month Costs</div>
+              <div class="stat-value" id="stat-month-cost">-</div>
+            </div>
+          </div>
+
+          <!-- Top Expensive Vehicles -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">🔥 Highest Maintenance Costs</span>
+              <span style="color: #6b7280; font-size: 0.875rem"
+                >Click for details</span
+              >
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Vehicle</th>
+                  <th>Repairs</th>
+                  <th>Parts Cost</th>
+                  <th>Labor Cost</th>
+                  <th>Total Cost</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="top-vehicles-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Parts Page -->
+        <div id="page-parts" class="page hidden">
+          <div class="header">
+            <div>
+              <h1 style="font-size: 1.5rem; font-weight: bold">
+                Parts Inventory
+              </h1>
+            </div>
+            <button
+              class="btn btn-primary admin-only mechanic-only hidden"
+              onclick="openModal('part-modal')"
+            >
+              + Add Part
+            </button>
+          </div>
+
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Part #</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Stock</th>
+                  <th>Min Stock</th>
+                  <th>Location</th>
+                  <th>Unit Cost</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="parts-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Fleet Page -->
+        <div id="page-fleet" class="page hidden">
+          <div class="header">
+            <div>
+              <h1 style="font-size: 1.5rem; font-weight: bold">
+                Fleet Management
+              </h1>
+            </div>
+            <button
+              class="btn btn-primary admin-only hidden"
+              onclick="openModal('truck-modal')"
+            >
+              + Add Vehicle
+            </button>
+          </div>
+
+          <div
+            id="fleet-grid"
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+              gap: 1.5rem;
+            "
+          ></div>
+        </div>
+
+        <!-- Vehicle Detail Page -->
+        <div id="page-vehicle-detail" class="page hidden">
+          <div class="header">
+            <button class="btn btn-secondary" onclick="showPage('fleet')">
+              ← Back to Fleet
+            </button>
+          </div>
+
+          <div id="vehicle-detail-content"></div>
+        </div>
+
+        <!-- Repairs Page -->
+        <div id="page-repairs" class="page hidden">
+          <div class="header">
+            <div>
+              <h1 style="font-size: 1.5rem; font-weight: bold">
+                Repair History
+              </h1>
+            </div>
+            <button
+              class="btn btn-primary admin-only mechanic-only hidden"
+              onclick="openRepairModal()"
+            >
+              + Log Repair
+            </button>
+          </div>
+
+          <div id="repairs-list"></div>
+        </div>
+
+        <!-- User Management (Admin Only) -->
+        <div id="page-users" class="page hidden admin-only">
+          <div class="header">
+            <div>
+              <h1 style="font-size: 1.5rem; font-weight: bold">
+                User Management
+              </h1>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('user-modal')">
+              + Create User
+            </button>
+          </div>
+
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Activity Logs (Admin Only) -->
+        <div id="page-logs" class="page hidden admin-only">
+          <div class="header">
+            <h1 style="font-size: 1.5rem; font-weight: bold">Activity Logs</h1>
+          </div>
+
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>User</th>
+                  <th>Action</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="logs-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Add Part Modal -->
+    <div id="part-modal" class="modal-overlay">
       <div class="modal">
         <div class="modal-header">
           <h2 class="modal-title">Add New Part</h2>
@@ -613,7 +831,7 @@
                 />
               </div>
               <div class="form-group">
-                <label>Cost ($)</label>
+                <label>Unit Cost ($)</label>
                 <input
                   type="number"
                   name="cost"
@@ -640,102 +858,8 @@
       </div>
     </div>
 
-    <!-- Repair Modal -->
-    <div
-      id="repair-modal"
-      class="modal-overlay"
-      onclick="if (event.target === this) closeModal('repair-modal');"
-    >
-      <div class="modal">
-        <div class="modal-header">
-          <h2 class="modal-title">Log Repair</h2>
-          <button class="modal-close" onclick="closeModal('repair-modal')">
-            &times;
-          </button>
-        </div>
-        <div class="modal-body">
-          <form id="repair-form">
-            <div class="form-row">
-              <div class="form-group">
-                <label>Date *</label>
-                <input type="date" name="date" required />
-              </div>
-              <div class="form-group">
-                <label>Vehicle *</label>
-                <select name="truckId" id="repair-truck" required></select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Issue Description *</label>
-              <textarea name="issue" rows="3" required></textarea>
-            </div>
-            <div class="form-group">
-              <label>Parts Used</label>
-              <div id="parts-used"></div>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm"
-                onclick="addPartRow()"
-                style="margin-top: 0.5rem"
-              >
-                + Add Part
-              </button>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Labor Hours</label>
-                <input type="number" name="laborHours" step="0.5" min="0" />
-              </div>
-              <div class="form-group">
-                <label>Mechanic</label>
-                <input type="text" name="mechanic" />
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Notes</label>
-              <textarea name="notes" rows="2"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Photos (Max 3)</label>
-              <div
-                class="photo-upload"
-                onclick="document.getElementById('photos').click()"
-              >
-                <div>📷 Click to upload</div>
-                <small style="color: #6b7280">Max 500KB each</small>
-              </div>
-              <input
-                type="file"
-                id="photos"
-                multiple
-                accept="image/*"
-                style="display: none"
-                onchange="handlePhotos(this)"
-              />
-              <div class="photo-preview" id="photo-preview"></div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button
-            class="btn btn-secondary"
-            onclick="closeModal('repair-modal')"
-          >
-            Cancel
-          </button>
-          <button class="btn btn-primary" onclick="saveRepair()">
-            Log Repair
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Truck Modal -->
-    <div
-      id="truck-modal"
-      class="modal-overlay"
-      onclick="if (event.target === this) closeModal('truck-modal');"
-    >
+    <!-- Add Vehicle Modal -->
+    <div id="truck-modal" class="modal-overlay">
       <div class="modal">
         <div class="modal-header">
           <h2 class="modal-title">Add Vehicle</h2>
@@ -768,13 +892,33 @@
               <input
                 type="text"
                 name="name"
-                placeholder="e.g., 2019 Freightliner"
+                placeholder="e.g., 2019 Freightliner Cascadia"
                 required
               />
             </div>
-            <div class="form-group">
-              <label>VIN</label>
-              <input type="text" name="vin" />
+            <div class="form-row">
+              <div class="form-group">
+                <label>Year</label>
+                <input type="number" name="year" min="1980" max="2030" />
+              </div>
+              <div class="form-group">
+                <label>Make</label>
+                <input
+                  type="text"
+                  name="make"
+                  placeholder="e.g., Freightliner"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Model</label>
+                <input type="text" name="model" placeholder="e.g., Cascadia" />
+              </div>
+              <div class="form-group">
+                <label>VIN</label>
+                <input type="text" name="vin" />
+              </div>
             </div>
             <div class="form-group">
               <label>Notes</label>
@@ -793,208 +937,292 @@
       </div>
     </div>
 
-    <script>
-      const API = window.location.origin;
-      let parts = [],
-        trucks = [],
-        repairs = [];
-      let tempPhotos = [];
+    <!-- Create User Modal -->
+    <div id="user-modal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 class="modal-title">Create New User</h2>
+          <button class="modal-close" onclick="closeModal('user-modal')">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="user-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Username *</label>
+                <input type="text" name="username" required />
+              </div>
+              <div class="form-group">
+                <label>Password *</label>
+                <input type="password" name="password" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Role *</label>
+                <select name="role" required>
+                  <option value="mechanic">Mechanic (Can log repairs)</option>
+                  <option value="driver">Driver (View only)</option>
+                  <option value="viewer">Viewer (Read-only access)</option>
+                  <option value="admin">Admin (Full access)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" />
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" name="phone" />
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('user-modal')">
+            Cancel
+          </button>
+          <button class="btn btn-primary" onclick="saveUser()">
+            Create User
+          </button>
+        </div>
+      </div>
+    </div>
 
-      async function init() {
+    <script>
+      // State
+      let currentUser = null;
+      let authToken = localStorage.getItem("fleet_token");
+      const API = window.location.origin;
+
+      // Check auth on load
+      if (authToken) {
+        validateToken();
+      }
+
+      async function validateToken() {
         try {
-          await Promise.all([
-            loadStats(),
-            loadParts(),
-            loadTrucks(),
-            loadRepairs(),
-          ]);
-          document.getElementById("loading").style.display = "none";
-          document.querySelector('input[name="date"]').valueAsDate = new Date();
+          const res = await fetch(`${API}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          if (res.ok) {
+            currentUser = await res.json();
+            showApp();
+          } else {
+            logout();
+          }
         } catch (e) {
-          showAlert("Error connecting to server: " + e.message);
-          console.error(e);
+          logout();
         }
       }
 
-      async function api(url, opts = {}) {
-        const res = await fetch(API + url, {
-          ...opts,
-          headers: { "Content-Type": "application/json", ...opts.headers },
+      // Login
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("login-username").value;
+          const password = document.getElementById("login-password").value;
+
+          try {
+            const res = await fetch(`${API}/api/auth/login`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+              authToken = data.token;
+              currentUser = data.user;
+              localStorage.setItem("fleet_token", authToken);
+              showApp();
+            } else {
+              showLoginError(data.error || "Login failed");
+            }
+          } catch (e) {
+            showLoginError("Network error");
+          }
         });
+
+      function showLoginError(msg) {
+        const el = document.getElementById("login-error");
+        el.textContent = msg;
+        el.classList.remove("hidden");
+      }
+
+      function showApp() {
+        document.getElementById("login-page").style.display = "none";
+        document.getElementById("app-container").classList.add("active");
+
+        // Update user info
+        document.getElementById("current-user-name").textContent =
+          currentUser.name || currentUser.username;
+        const roleEl = document.getElementById("current-user-role");
+        roleEl.textContent = currentUser.role;
+        roleEl.className = `user-role role-${currentUser.role}`;
+
+        // Show/hide based on role
+        setupRoleBasedAccess();
+
+        // Load data
+        loadDashboard();
+      }
+
+      function setupRoleBasedAccess() {
+        const role = currentUser.role;
+
+        // Admin only
+        if (role === "admin") {
+          document
+            .querySelectorAll(".admin-only")
+            .forEach((el) => el.classList.remove("hidden"));
+        }
+
+        // Mechanic and Admin can add parts/repairs
+        if (role === "admin" || role === "mechanic") {
+          document
+            .querySelectorAll(".mechanic-only")
+            .forEach((el) => el.classList.remove("hidden"));
+        }
+
+        // Drivers and viewers are read-only
+        if (role === "driver" || role === "viewer") {
+          document
+            .querySelectorAll(".admin-only, .mechanic-only")
+            .forEach((el) => el.classList.add("hidden"));
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem("fleet_token");
+        currentUser = null;
+        authToken = null;
+        location.reload();
+      }
+
+      // API Helper
+      async function api(url, opts = {}) {
+        const res = await fetch(`${API}${url}`, {
+          ...opts,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+            ...opts.headers,
+          },
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          logout();
+          return;
+        }
+
         if (!res.ok) {
           const err = await res.json();
           throw new Error(err.error || "API Error");
         }
+
         return res.json();
       }
 
-      async function loadStats() {
-        const s = await api("/api/stats");
-        document.getElementById("stat-total").textContent = s.totalParts;
-        document.getElementById("stat-low").textContent = s.lowStock;
-        document.getElementById("stat-fleet").textContent = s.fleetSize;
-        document.getElementById("stat-cost").textContent =
-          "$" + Math.round(s.monthCost).toLocaleString();
+      // Navigation
+      function showPage(page) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.add("hidden"));
+        document.getElementById(`page-${page}`).classList.remove("hidden");
+
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((n) => n.classList.remove("active"));
+        event.target.closest(".nav-item")?.classList.add("active");
+
+        if (page === "dashboard") loadDashboard();
+        if (page === "parts") loadParts();
+        if (page === "fleet") loadFleet();
+        if (page === "repairs") loadRepairs();
+        if (page === "users" && currentUser.role === "admin") loadUsers();
+        if (page === "logs" && currentUser.role === "admin") loadLogs();
       }
 
+      // Dashboard
+      async function loadDashboard() {
+        try {
+          const stats = await api("/api/stats");
+          document.getElementById("stat-total-parts").textContent =
+            stats.totalParts;
+          document.getElementById("stat-low-stock").textContent =
+            stats.lowStock;
+          document.getElementById("stat-fleet-size").textContent =
+            stats.fleetSize;
+          document.getElementById("stat-month-cost").textContent =
+            "$" + Math.round(stats.monthCost).toLocaleString();
+
+          // Top vehicles
+          const tbody = document.getElementById("top-vehicles-table");
+          if (stats.topVehicles?.length) {
+            tbody.innerHTML = stats.topVehicles
+              .map(
+                (v) => `
+                        <tr style="cursor: pointer;" onclick="viewVehicle('${v.truckId}')">
+                            <td><strong>${v.truckId}</strong><br><small>${v.name}</small></td>
+                            <td>${v.repairCount}</td>
+                            <td>$${Math.round(v.totalRepairCost * 0.7).toLocaleString()}</td>
+                            <td>$${Math.round(v.totalRepairCost * 0.3).toLocaleString()}</td>
+                            <td style="font-weight: bold; color: var(--danger);">$${Math.round(v.totalRepairCost).toLocaleString()}</td>
+                            <td><button class="btn btn-sm btn-secondary">View</button></td>
+                        </tr>
+                    `,
+              )
+              .join("");
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // Parts
       async function loadParts() {
-        parts = await api("/api/parts");
-        renderParts();
-      }
-
-      async function loadTrucks() {
-        trucks = await api("/api/trucks");
-        renderFleet();
-        const sel = document.getElementById("repair-truck");
-        sel.innerHTML =
-          '<option value="">Select Vehicle</option>' +
-          trucks
-            .map(
-              (t) =>
-                `<option value="${t.truckId}">${t.truckId} - ${t.name}</option>`,
-            )
+        try {
+          const parts = await api("/api/parts");
+          const tbody = document.getElementById("parts-table");
+          tbody.innerHTML = parts
+            .map((p) => {
+              const low = p.quantity <= p.minStock;
+              return `
+                        <tr class="${low ? "low-stock" : ""}">
+                            <td><strong>${p.partNumber}</strong></td>
+                            <td>${p.description}</td>
+                            <td>${p.category}</td>
+                            <td>${p.quantity}</td>
+                            <td>${p.minStock}</td>
+                            <td>${p.location || "-"}</td>
+                            <td>$${p.cost || 0}</td>
+                            <td>
+                                ${
+                                  currentUser.role !== "driver" &&
+                                  currentUser.role !== "viewer"
+                                    ? `
+                                    <button class="btn btn-sm btn-danger" onclick="deletePart('${p._id}')">Delete</button>
+                                `
+                                    : "-"
+                                }
+                            </td>
+                        </tr>
+                    `;
+            })
             .join("");
-      }
-
-      async function loadRepairs() {
-        repairs = await api("/api/repairs");
-        renderRepairs();
-      }
-
-      function renderParts() {
-        const search = document.getElementById("search").value.toLowerCase();
-        const filtered = parts.filter(
-          (p) =>
-            !search ||
-            p.partNumber.toLowerCase().includes(search) ||
-            p.description.toLowerCase().includes(search),
-        );
-
-        const tbody = document.getElementById("parts-list");
-        if (filtered.length === 0) {
-          tbody.innerHTML =
-            '<tr><td colspan="7" class="empty-state">No parts found</td></tr>';
-          return;
+        } catch (e) {
+          console.error(e);
         }
-
-        tbody.innerHTML = filtered
-          .map((p) => {
-            const low = p.quantity <= p.minStock;
-            return `<tr class="${low ? "low-stock" : ""}">
-                    <td><strong>${p.partNumber}</strong></td>
-                    <td>${p.description}</td>
-                    <td>${p.category}</td>
-                    <td>${p.quantity} ${low ? '<span class="badge badge-danger">LOW</span>' : '<span class="badge badge-success">OK</span>'}</td>
-                    <td>${p.location || "-"}</td>
-                    <td>$${p.cost || 0}</td>
-                    <td><button class="btn btn-sm btn-danger" onclick="deletePart('${p._id}')">Delete</button></td>
-                </tr>`;
-          })
-          .join("");
-      }
-
-      function renderRepairs() {
-        const search = document.getElementById("search").value.toLowerCase();
-        const filtered = repairs.filter(
-          (r) =>
-            !search ||
-            r.issue.toLowerCase().includes(search) ||
-            (r.truckName && r.truckName.toLowerCase().includes(search)),
-        );
-
-        const div = document.getElementById("repairs-list");
-        if (filtered.length === 0) {
-          div.innerHTML =
-            '<div class="empty-state"><div class="empty-state-icon">🔧</div>No repairs yet</div>';
-          return;
-        }
-
-        div.innerHTML = filtered
-          .map((r) => {
-            const partsList =
-              r.partsUsed
-                .map((p) => `${p.quantity}x ${p.partNumber}`)
-                .join(", ") || "No parts";
-            return `<div class="repair-card">
-                    <div class="repair-header">
-                        <div>
-                            <div class="repair-date">${new Date(r.date).toLocaleDateString()}</div>
-                            <div class="repair-truck">${r.truckName || r.truckId}</div>
-                        </div>
-                        <button class="btn btn-sm btn-danger" onclick="deleteRepair('${r._id}')">Delete</button>
-                    </div>
-                    <div><strong>Issue:</strong> ${r.issue}</div>
-                    <div class="repair-parts"><strong>Parts:</strong> ${partsList}</div>
-                    ${r.laborHours ? `<div><strong>Labor:</strong> ${r.laborHours}h${r.mechanic ? ` by ${r.mechanic}` : ""}</div>` : ""}
-                    ${r.notes ? `<div style="color:#6B7280;margin-top:0.5rem">${r.notes}</div>` : ""}
-                    ${r.photos?.length ? `<div class="repair-photos">${r.photos.map((photo) => `<img src="${photo}" class="repair-photo" onclick="viewImage('${photo}')">`).join("")}</div>` : ""}
-                </div>`;
-          })
-          .join("");
-      }
-
-      function renderFleet() {
-        const search = document.getElementById("search").value.toLowerCase();
-        const filtered = trucks.filter(
-          (t) =>
-            !search ||
-            t.truckId.toLowerCase().includes(search) ||
-            t.name.toLowerCase().includes(search),
-        );
-
-        const div = document.getElementById("fleet-list");
-        if (filtered.length === 0) {
-          div.innerHTML =
-            '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🚛</div>No vehicles</div>';
-          return;
-        }
-
-        div.innerHTML = filtered
-          .map(
-            (t) => `
-                <div class="fleet-card ${t.type}">
-                    <div class="fleet-id">${t.truckId}</div>
-                    <div class="fleet-name">${t.name}</div>
-                    <span class="fleet-type">${t.type}</span>
-                    ${t.vin ? `<div style="margin-top:0.5rem;font-size:0.875rem;color:#6B7280">VIN: ${t.vin}</div>` : ""}
-                    ${t.notes ? `<div style="margin-top:0.5rem;font-size:0.875rem;color:#6B7280">${t.notes}</div>` : ""}
-                    <button class="btn btn-secondary btn-sm" style="margin-top:1rem;width:100%" onclick="showTruckHistory('${t.truckId}')">History</button>
-                    <button class="btn btn-danger btn-sm" style="margin-top:0.5rem;width:100%" onclick="deleteTruck('${t._id}')">Delete</button>
-                </div>
-            `,
-          )
-          .join("");
-      }
-
-      function switchTab(tab, el) {
-        document
-          .querySelectorAll(".tab-content")
-          .forEach((c) => (c.style.display = "none"));
-        document.getElementById("tab-" + tab).style.display = "block";
-        document
-          .querySelectorAll(".tab")
-          .forEach((t) => t.classList.remove("active"));
-        el.classList.add("active");
-        if (tab === "parts") renderParts();
-        if (tab === "repairs") renderRepairs();
-        if (tab === "fleet") renderFleet();
-      }
-
-      function openModal(id) {
-        document.getElementById(id).classList.add("active");
-      }
-      function closeModal(id) {
-        document.getElementById(id).classList.remove("active");
-        const form = document.querySelector("#" + id + " form");
-        if (form) form.reset();
-      }
-
-      function showAlert(msg, type = "error") {
-        const div = document.createElement("div");
-        div.className = `alert alert-${type} show`;
-        div.textContent = msg;
-        document.getElementById("alerts").appendChild(div);
-        setTimeout(() => div.remove(), 5000);
       }
 
       async function savePart() {
@@ -1003,189 +1231,248 @@
         data.quantity = parseInt(data.quantity);
         data.minStock = parseInt(data.minStock);
         data.cost = parseFloat(data.cost) || 0;
+
         try {
           await api("/api/parts", {
             method: "POST",
             body: JSON.stringify(data),
           });
-          showAlert("Part added!", "success");
           closeModal("part-modal");
-          await Promise.all([loadParts(), loadStats()]);
+          form.reset();
+          loadParts();
+          loadDashboard();
+          showAlert("Part added successfully!", "success");
         } catch (e) {
-          showAlert(e.message);
+          showAlert(e.message, "error");
         }
       }
 
-      async function deletePart(id) {
-        if (!confirm("Delete this part?")) return;
+      // Fleet
+      async function loadFleet() {
         try {
-          await api("/api/parts/" + id, { method: "DELETE" });
-          await Promise.all([loadParts(), loadStats()]);
+          const trucks = await api("/api/trucks");
+          const grid = document.getElementById("fleet-grid");
+          grid.innerHTML = trucks
+            .map(
+              (t) => `
+                    <div class="card" style="cursor: pointer;" onclick="viewVehicle('${t.truckId}')">
+                        <div style="padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <div style="font-size: 0.875rem; color: #6B7280; text-transform: uppercase; font-weight: 600;">${t.truckId}</div>
+                                    <h3 style="font-size: 1.25rem; font-weight: bold; margin-top: 0.25rem;">${t.name}</h3>
+                                </div>
+                                <span class="badge ${t.status === "active" ? "badge-success" : "badge-warning"}">${t.status}</span>
+                            </div>
+                            <div style="color: #6B7280; font-size: 0.875rem; margin-bottom: 1rem;">
+                                ${t.year || ""} ${t.make || ""} ${t.model || ""}
+                            </div>
+                            <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="color: #6B7280;">Total Repairs:</span>
+                                    <strong>${t.repairCount}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #6B7280;">Total Cost:</span>
+                                    <strong style="color: var(--danger);">$${Math.round(t.totalRepairCost).toLocaleString()}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+            )
+            .join("");
         } catch (e) {
-          showAlert(e.message);
+          console.error(e);
         }
       }
 
-      function openRepairModal() {
-        if (trucks.length === 0) {
-          showAlert("Add vehicles first");
-          return;
+      async function viewVehicle(truckId) {
+        try {
+          const stats = await api(`/api/vehicles/${truckId}/stats`);
+
+          document
+            .querySelectorAll(".page")
+            .forEach((p) => p.classList.add("hidden"));
+          document
+            .getElementById("page-vehicle-detail")
+            .classList.remove("hidden");
+
+          const content = document.getElementById("vehicle-detail-content");
+          content.innerHTML = `
+                    <div class="vehicle-header">
+                        <div class="vehicle-title">${stats.truck.name}</div>
+                        <div class="vehicle-meta">
+                            <span><strong>ID:</strong> ${stats.truck.truckId}</span>
+                            <span><strong>Type:</strong> ${stats.truck.type}</span>
+                            <span><strong>Status:</strong> ${stats.truck.status}</span>
+                            ${stats.truck.vin ? `<span><strong>VIN:</strong> ${stats.truck.vin}</span>` : ""}
+                        </div>
+                        <div class="cost-breakdown">
+                            <div class="cost-item">
+                                <div class="cost-label">Total Repairs</div>
+                                <div class="cost-value" style="color: var(--text);">${stats.truck.repairCount}</div>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-label">Parts Cost</div>
+                                <div class="cost-value">$${Math.round(stats.truck.totalPartsCost).toLocaleString()}</div>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-label">Labor Cost</div>
+                                <div class="cost-value">$${Math.round(stats.truck.totalLaborCost).toLocaleString()}</div>
+                            </div>
+                            <div class="cost-item">
+                                <div class="cost-label">Total Spent</div>
+                                <div class="cost-value" style="font-size: 2rem;">$${Math.round(stats.truck.totalRepairCost).toLocaleString()}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Repair History</h2>
+                    <div class="card">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Issue</th>
+                                    <th>Parts Cost</th>
+                                    <th>Labor</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${stats.repairs
+                                  .map(
+                                    (r) => `
+                                    <tr>
+                                        <td>${new Date(r.date).toLocaleDateString()}</td>
+                                        <td>${r.issue}</td>
+                                        <td>$${Math.round(r.partsTotalCost || 0)}</td>
+                                        <td>$${Math.round(r.laborCost || 0)}</td>
+                                        <td style="font-weight: bold;">$${Math.round(r.totalCost || 0)}</td>
+                                    </tr>
+                                `,
+                                  )
+                                  .join("")}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+        } catch (e) {
+          showAlert("Failed to load vehicle details", "error");
         }
-        if (parts.length === 0) {
-          showAlert("Add parts first");
-          return;
-        }
-        tempPhotos = [];
-        document.getElementById("photo-preview").innerHTML = "";
-        document.getElementById("parts-used").innerHTML = "";
-        addPartRow();
-        openModal("repair-modal");
       }
 
-      function addPartRow() {
+      // Users (Admin)
+      async function loadUsers() {
+        try {
+          const users = await api("/api/users");
+          const tbody = document.getElementById("users-table");
+          tbody.innerHTML = users
+            .map(
+              (u) => `
+                    <tr>
+                        <td><strong>${u.username}</strong></td>
+                        <td>${u.name || "-"}</td>
+                        <td><span class="badge badge-${u.role === "admin" ? "danger" : u.role === "mechanic" ? "success" : "warning"}">${u.role}</span></td>
+                        <td>${u.isActive ? '<span style="color: var(--success);">● Active</span>' : '<span style="color: var(--danger);">● Inactive</span>'}</td>
+                        <td>${new Date(u.createdAt).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="toggleUser('${u._id}', ${!u.isActive})">
+                                ${u.isActive ? "Disable" : "Enable"}
+                            </button>
+                        </td>
+                    </tr>
+                `,
+            )
+            .join("");
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      async function saveUser() {
+        const form = document.getElementById("user-form");
+        const data = Object.fromEntries(new FormData(form));
+
+        try {
+          await api("/api/users", {
+            method: "POST",
+            body: JSON.stringify(data),
+          });
+          closeModal("user-modal");
+          form.reset();
+          loadUsers();
+          showAlert("User created successfully!", "success");
+        } catch (e) {
+          showAlert(e.message, "error");
+        }
+      }
+
+      // Logs (Admin)
+      async function loadLogs() {
+        try {
+          const logs = await api("/api/activity-logs");
+          const tbody = document.getElementById("logs-table");
+          tbody.innerHTML = logs
+            .map(
+              (l) => `
+                    <tr>
+                        <td>${new Date(l.timestamp).toLocaleString()}</td>
+                        <td>${l.username}</td>
+                        <td><span class="badge badge-secondary">${l.action}</span></td>
+                        <td>${l.entityType}: ${l.entityId}</td>
+                    </tr>
+                `,
+            )
+            .join("");
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // Modal helpers
+      function openModal(id) {
+        document.getElementById(id).classList.add("active");
+      }
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("active");
+        const form = document.querySelector(`#${id} form`);
+        if (form) form.reset();
+      }
+
+      function showAlert(msg, type = "error") {
         const div = document.createElement("div");
-        div.style = "display:flex;gap:0.5rem;margin-bottom:0.5rem";
-        div.innerHTML = `
-                <select class="part-select" style="flex:2;padding:0.5rem">
-                    <option value="">Select Part</option>
-                    ${parts.map((p) => `<option value="${p._id}">${p.partNumber} - ${p.description} (Stock:${p.quantity})</option>`).join("")}
-                </select>
-                <input type="number" class="part-qty" value="1" min="1" style="flex:1;padding:0.5rem">
-                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">×</button>
-            `;
-        document.getElementById("parts-used").appendChild(div);
-      }
-
-      function handlePhotos(input) {
-        Array.from(input.files).forEach((file) => {
-          if (tempPhotos.length >= 3) {
-            showAlert("Max 3 photos");
-            return;
-          }
-          if (file.size > 500000) {
-            showAlert("Max 500KB per photo");
-            return;
-          }
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            tempPhotos.push(e.target.result);
-            updatePhotoPreview();
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-
-      function updatePhotoPreview() {
-        document.getElementById("photo-preview").innerHTML = tempPhotos
-          .map(
-            (p, i) => `
-                <div style="position:relative">
-                    <img src="${p}">
-                    <button onclick="tempPhotos.splice(${i},1);updatePhotoPreview()" style="position:absolute;top:-8px;right:-8px;background:var(--danger);color:white;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer">×</button>
-                </div>
-            `,
-          )
-          .join("");
-      }
-
-      async function saveRepair() {
-        const form = document.getElementById("repair-form");
-        const data = Object.fromEntries(new FormData(form));
-        data.partsUsed = Array.from(document.querySelectorAll(".part-select"))
-          .map((sel, i) => ({
-            partId: sel.value,
-            quantity: parseInt(document.querySelectorAll(".part-qty")[i].value),
-          }))
-          .filter((p) => p.partId);
-        data.laborHours = parseFloat(data.laborHours) || 0;
-        data.photos = tempPhotos;
-        try {
-          await api("/api/repairs", {
-            method: "POST",
-            body: JSON.stringify(data),
-          });
-          showAlert("Repair logged!", "success");
-          closeModal("repair-modal");
-          await Promise.all([loadRepairs(), loadParts(), loadStats()]);
-        } catch (e) {
-          showAlert(e.message);
-        }
-      }
-
-      async function deleteRepair(id) {
-        if (!confirm("Delete this repair?")) return;
-        try {
-          await api("/api/repairs/" + id, { method: "DELETE" });
-          await Promise.all([loadRepairs(), loadStats()]);
-        } catch (e) {
-          showAlert(e.message);
-        }
-      }
-
-      async function saveTruck() {
-        const form = document.getElementById("truck-form");
-        const data = Object.fromEntries(new FormData(form));
-        try {
-          await api("/api/trucks", {
-            method: "POST",
-            body: JSON.stringify(data),
-          });
-          showAlert("Vehicle added!", "success");
-          closeModal("truck-modal");
-          await Promise.all([loadTrucks(), loadStats()]);
-        } catch (e) {
-          showAlert(e.message);
-        }
-      }
-
-      async function deleteTruck(id) {
-        if (!confirm("Delete this vehicle?")) return;
-        try {
-          await api("/api/trucks/" + id, { method: "DELETE" });
-          await Promise.all([loadTrucks(), loadStats()]);
-        } catch (e) {
-          showAlert(e.message);
-        }
-      }
-
-      function showTruckHistory(id) {
-        document.getElementById("search").value = id;
-        document.querySelector(".tab:nth-child(2)").click();
-      }
-
-      function doSearch() {
-        const active = document.querySelector(".tab.active").textContent;
-        if (active === "Parts") renderParts();
-        if (active === "Repairs") renderRepairs();
-        if (active === "Fleet") renderFleet();
+        div.className = `alert alert-${type}`;
+        div.textContent = msg;
+        document.getElementById("app-alerts").appendChild(div);
+        setTimeout(() => div.remove(), 5000);
       }
 
       async function exportData() {
-        const data = await api("/api/export");
-        const blob = new Blob([JSON.stringify(data, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `fleet-backup-${new Date().toISOString().split("T")[0]}.json`;
-        a.click();
-        showAlert("Exported!", "success");
+        try {
+          const data = await api("/api/export");
+          const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `fleet-export-${new Date().toISOString().split("T")[0]}.json`;
+          a.click();
+        } catch (e) {
+          showAlert("Export failed", "error");
+        }
       }
 
-      function viewImage(src) {
-        const w = window.open();
-        w.document.write(`<img src="${src}" style="max-width:100%">`);
-      }
-
+      // Close modals on escape
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape")
+        if (e.key === "Escape") {
           document
             .querySelectorAll(".modal-overlay")
             .forEach((m) => m.classList.remove("active"));
+        }
       });
-
-      init();
     </script>
   </body>
 </html>
