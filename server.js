@@ -45,7 +45,7 @@ mongoose
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Error:", err));
 
-// USER SCHEMA (New)
+// USER SCHEMA
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -315,7 +315,7 @@ app.get(
   },
 );
 
-// Update user status (Enable/Disable) - PATCH method for frontend compatibility
+// Update user status (Enable/Disable) - PATCH method
 app.patch(
   "/api/users/:id",
   authenticate,
@@ -729,7 +729,7 @@ app.post(
           partsUsed.push({
             partId: part._id,
             partNumber: part.partNumber,
-            quantity: quantityUsed,
+            quantity: parseInt(quantityUsed),
             unitCost: unitCost,
             totalCost: totalCost,
           });
@@ -737,7 +737,7 @@ app.post(
           partsTotalCost = totalCost;
 
           // Update inventory
-          part.quantity -= quantityUsed;
+          part.quantity -= parseInt(quantityUsed);
           await part.save();
         }
       }
@@ -753,7 +753,7 @@ app.post(
         partsUsed,
         partsTotalCost,
         laborCost: laborCostNum,
-        laborHours: laborCostNum / 75, // Assuming $75/hr rate
+        laborHours: laborCostNum / 75,
         laborRate: 75,
         totalCost,
         mechanic: mechanic || req.user.username,
