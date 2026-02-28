@@ -566,12 +566,10 @@ app.delete(
 
       const hasRepairs = await Repair.findOne({ truckId: truck.truckId });
       if (hasRepairs && !req.query.force) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Vehicle has repair history. Use ?force=true to delete anyway.",
-          });
+        return res.status(400).json({
+          error:
+            "Vehicle has repair history. Use ?force=true to delete anyway.",
+        });
       }
 
       if (hasRepairs && req.query.force) {
@@ -594,7 +592,7 @@ app.delete(
   },
 );
 
-// REPAIRS API - Updated for multiple parts
+// REPAIRS API - Updated for multiple parts and editing
 app.get("/api/repairs", authenticate, async (req, res) => {
   try {
     let query = {};
@@ -611,6 +609,22 @@ app.get("/api/repairs", authenticate, async (req, res) => {
     );
 
     res.json(repairsWithTruckInfo);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get single repair (for editing)
+app.get("/api/repairs/:id", authenticate, async (req, res) => {
+  try {
+    const repair = await Repair.findById(req.params.id);
+    if (!repair) return res.status(404).json({ error: "Repair not found" });
+
+    const truck = await Truck.findOne({ truckId: repair.truckId });
+    res.json({
+      ...repair.toObject(),
+      truckName: truck ? truck.name : repair.truckId,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -714,6 +728,106 @@ app.post(
       res.status(201).json(repair);
     } catch (error) {
       console.error("Repair creation error:", error);
+      res.status(400).json({ error: error.message });
+    }
+  },
+);
+
+// Update Repair (NEW ENDPOINT)
+app.put(
+  "/api/repairs/:id",
+  authenticate,
+  requireRole(["admin", "mechanic"]),
+  async (req, res) => {
+    try {
+      const repair = await Repair.findById(req.params.id);
+      if (!repair) return res.status(404).json({ error: "Repair not found" });
+
+      const {
+        truckId,
+        date,
+        issue,
+        laborHours,
+        laborRate,
+        mechanic,
+        notes,
+        partsUsed,
+      } = req.body;
+
+      // Return old parts to inventory first
+      for (const used of repair.partsUsed || []) {
+        if (used.partId) {
+          await Part.findByIdAndUpdate(used.partId, {
+            $inc: { quantity: used.quantity },
+          });
+        }
+      }
+
+      // Process new parts
+      let partsTotalCost = 0;
+      const processedParts = [];
+
+      if (partsUsed && Array.isArray(partsUsed) && partsUsed.length > 0) {
+        for (const item of partsUsed) {
+          const part = await Part.findById(item.partId);
+          if (part) {
+            if (part.quantity < item.quantity) {
+              return res.status(400).json({
+                error: `Insufficient stock for ${part.partNumber}. Only ${part.quantity} available`,
+              });
+            }
+
+            part.quantity -= item.quantity;
+            await part.save();
+
+            processedParts.push({
+              partId: part._id,
+              partNumber: part.partNumber,
+              description: part.description,
+              quantity: item.quantity,
+              unitCost: item.unitCost || part.cost || 0,
+              totalCost: (item.unitCost || part.cost || 0) * item.quantity,
+            });
+
+            partsTotalCost += (item.unitCost || part.cost || 0) * item.quantity;
+          }
+        }
+      }
+
+      // Calculate costs
+      const laborHrs = parseFloat(laborHours) || 0;
+      const rate = parseFloat(laborRate) || 75;
+      const laborCost = laborHrs * rate;
+      const totalCost = partsTotalCost + laborCost;
+
+      // Update repair
+      repair.truckId = truckId || repair.truckId;
+      repair.date = date || repair.date;
+      repair.issue = issue || repair.issue;
+      repair.partsUsed = processedParts;
+      repair.partsTotalCost = partsTotalCost;
+      repair.laborHours = laborHrs;
+      repair.laborRate = rate;
+      repair.laborCost = laborCost;
+      repair.totalCost = totalCost;
+      repair.mechanic = mechanic || repair.mechanic;
+      repair.notes = notes;
+
+      await repair.save();
+      await updateTruckCosts(repair.truckId);
+
+      await logActivity(
+        req.user.userId,
+        req.user.username,
+        "UPDATE_REPAIR",
+        "Repair",
+        repair._id,
+        { truckId: repair.truckId, totalCost },
+      );
+
+      res.json(repair);
+    } catch (error) {
+      console.error("Repair update error:", error);
       res.status(400).json({ error: error.message });
     }
   },
