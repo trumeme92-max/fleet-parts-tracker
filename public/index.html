@@ -1,15 +1,14 @@
+<!-- index.html -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fleet Command Pro</title>
-    <!-- Font Awesome for professional icons -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
@@ -56,7 +55,6 @@
         -webkit-font-smoothing: antialiased;
       }
 
-      /* Scrollbar styling */
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -72,7 +70,6 @@
         background: #94a3b8;
       }
 
-      /* Login Page - Modern Glassmorphism */
       .login-container {
         min-height: 100vh;
         display: flex;
@@ -141,7 +138,6 @@
         font-size: 0.95rem;
       }
 
-      /* Form Inputs Modern */
       .form-group {
         margin-bottom: 1.25rem;
       }
@@ -186,7 +182,6 @@
         color: #94a3b8;
       }
 
-      /* Buttons Modern */
       .btn {
         padding: 0.75rem 1.5rem;
         border: none;
@@ -252,7 +247,6 @@
         border-radius: 50%;
       }
 
-      /* Main App Layout */
       .app-container {
         display: none;
         min-height: 100vh;
@@ -261,7 +255,6 @@
         display: flex;
       }
 
-      /* Sidebar - Modern Dark */
       .sidebar {
         width: 280px;
         background: var(--sidebar);
@@ -400,7 +393,6 @@
         color: #fca5a5;
       }
 
-      /* Main Content */
       .main-content {
         flex: 1;
         margin-left: 280px;
@@ -428,7 +420,6 @@
         font-size: 1rem;
       }
 
-      /* Stats Grid - Modern Cards */
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -521,7 +512,6 @@
         gap: 0.25rem;
       }
 
-      /* Cards */
       .card {
         background: var(--card);
         border-radius: var(--radius);
@@ -553,7 +543,6 @@
         color: var(--primary);
       }
 
-      /* Tables Modern */
       .table-container {
         overflow-x: auto;
       }
@@ -592,7 +581,6 @@
         font-weight: 500;
       }
 
-      /* Status Badges */
       .badge {
         display: inline-flex;
         align-items: center;
@@ -627,7 +615,6 @@
         border-color: #a5f3fc;
       }
 
-      /* Empty States */
       .empty-state {
         text-align: center;
         padding: 4rem 2rem;
@@ -644,7 +631,6 @@
         color: var(--text);
       }
 
-      /* Modal Modern */
       .modal-overlay {
         display: none;
         position: fixed;
@@ -720,7 +706,6 @@
         color: var(--text);
       }
 
-      /* Modal Footer - Fixed */
       .modal-footer {
         padding: 1.5rem;
         border-top: 1px solid var(--border);
@@ -730,7 +715,6 @@
         background: #f8fafc;
       }
 
-      /* Form Improvements */
       .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -753,7 +737,6 @@
         gap: 0.5rem;
       }
 
-      /* Vehicle Cards Grid */
       .vehicle-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -839,7 +822,6 @@
         margin-top: 0.25rem;
       }
 
-      /* Repair Items */
       .repair-item {
         background: var(--card);
         border: 1px solid var(--border);
@@ -896,7 +878,6 @@
         gap: 0.375rem;
       }
 
-      /* Alerts */
       .alert {
         padding: 1rem 1.5rem;
         border-radius: var(--radius-sm);
@@ -931,7 +912,6 @@
         font-size: 1.25rem;
       }
 
-      /* Parts List in Repair Modal */
       .parts-list {
         background: #f8fafc;
         border: 2px dashed var(--border);
@@ -981,7 +961,6 @@
         border: 1px solid #bfdbfe;
       }
 
-      /* Responsive */
       @media (max-width: 1024px) {
         .sidebar {
           transform: translateX(-100%);
@@ -996,7 +975,6 @@
         }
       }
 
-      /* Loading States */
       .skeleton {
         background: linear-gradient(
           90deg,
@@ -1017,12 +995,10 @@
         }
       }
 
-      /* Hidden */
       .hidden {
         display: none !important;
       }
 
-      /* Password Toggle Button */
       .password-toggle {
         position: absolute;
         right: 1rem;
@@ -1042,18 +1018,15 @@
         border-radius: 6px;
         transition: all 0.2s;
       }
-
       .password-toggle:hover {
         background: #f1f5f9;
         color: var(--primary);
       }
-
       .password-toggle:focus {
         outline: none;
         box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
       }
 
-      /* Login Attempts Warning */
       .login-attempts {
         margin-bottom: 1rem;
         padding: 0.75rem;
@@ -1066,14 +1039,11 @@
         align-items: center;
         gap: 0.5rem;
       }
-
       .login-attempts.danger {
         background: #fee2e2;
         border-color: #fecaca;
         color: #991b1b;
       }
-
-      /* Button Loading State */
       .btn-loading {
         opacity: 0.7;
         cursor: not-allowed;
@@ -1084,13 +1054,10 @@
           transform: rotate(360deg);
         }
       }
-
       .btn-loading i {
         animation: spin 0.8s linear infinite;
       }
     </style>
-    <base target="_blank" />
-    <base target="_blank" />
   </head>
   <body>
     <!-- Login Page -->
@@ -1107,7 +1074,6 @@
           <span id="login-error-text"></span>
         </div>
 
-        <!-- Rate Limit Warning -->
         <div
           id="login-warning"
           class="alert alert-warning hidden"
@@ -1146,7 +1112,6 @@
                 type="button"
                 id="toggle-password"
                 class="password-toggle"
-                onclick="togglePasswordVisibility()"
                 title="Show/Hide Password"
               >
                 <i class="fas fa-eye"></i>
@@ -1154,7 +1119,6 @@
             </div>
           </div>
 
-          <!-- Login Attempts Counter -->
           <div id="login-attempts" class="login-attempts hidden">
             <i class="fas fa-info-circle"></i>
             <span id="attempts-text"></span>
@@ -1170,30 +1134,6 @@
             Sign In
           </button>
         </form>
-
-        <div
-          style="
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-            text-align: center;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-          "
-        >
-          <p style="margin-bottom: 0.5rem">
-            <i class="fas fa-info-circle"></i>
-            <strong>Demo Credentials:</strong>
-          </p>
-          <code
-            style="
-              background: #f1f5f9;
-              padding: 0.25rem 0.5rem;
-              border-radius: 4px;
-            "
-            >admin / Admin@123!</code
-          >
-        </div>
       </div>
     </div>
 
@@ -1221,40 +1161,31 @@
         </div>
 
         <nav class="nav-menu">
-          <div
-            class="nav-item active"
-            onclick="navigateToPage('dashboard', this)"
-          >
+          <div class="nav-item active" data-page="dashboard">
             <i class="fas fa-chart-line"></i>
             <span>Dashboard</span>
           </div>
-          <div class="nav-item" onclick="navigateToPage('parts', this)">
+          <div class="nav-item" data-page="parts">
             <i class="fas fa-boxes"></i>
             <span>Parts Inventory</span>
           </div>
-          <div class="nav-item" onclick="navigateToPage('repairs', this)">
+          <div class="nav-item" data-page="repairs">
             <i class="fas fa-wrench"></i>
             <span>Repairs</span>
           </div>
-          <div class="nav-item" onclick="navigateToPage('fleet', this)">
+          <div class="nav-item" data-page="fleet">
             <i class="fas fa-truck-moving"></i>
             <span>Fleet</span>
           </div>
-          <div
-            class="nav-item admin-only hidden"
-            onclick="navigateToPage('users', this)"
-          >
+          <div class="nav-item admin-only hidden" data-page="users">
             <i class="fas fa-users-cog"></i>
             <span>User Management</span>
           </div>
-          <div
-            class="nav-item admin-only hidden"
-            onclick="navigateToPage('logs', this)"
-          >
+          <div class="nav-item admin-only hidden" data-page="logs">
             <i class="fas fa-clipboard-list"></i>
             <span>Activity Logs</span>
           </div>
-          <div class="nav-item logout" onclick="logout()">
+          <div class="nav-item logout" id="nav-logout">
             <i class="fas fa-sign-out-alt"></i>
             <span>Logout</span>
           </div>
@@ -1263,15 +1194,13 @@
 
       <!-- Main Content -->
       <main class="main-content">
-        <!-- Alerts -->
         <div id="app-alerts"></div>
 
         <!-- Dashboard Page -->
         <div id="page-dashboard" class="page">
           <div class="page-header">
             <h1 class="page-title">
-              <i class="fas fa-chart-line"></i>
-              Dashboard
+              <i class="fas fa-chart-line"></i> Dashboard
             </h1>
             <p class="page-subtitle">
               Real-time overview of your fleet operations
@@ -1285,13 +1214,10 @@
                   <div class="stat-label">Total Parts</div>
                   <div class="stat-value" id="stat-total-parts">-</div>
                 </div>
-                <div class="stat-icon">
-                  <i class="fas fa-cubes"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-cubes"></i></div>
               </div>
               <div class="stat-change">
-                <i class="fas fa-arrow-up"></i>
-                <span>In stock items</span>
+                <i class="fas fa-arrow-up"></i><span>In stock items</span>
               </div>
             </div>
 
@@ -1312,8 +1238,7 @@
                 </div>
               </div>
               <div class="stat-change" style="color: var(--danger)">
-                <i class="fas fa-bell"></i>
-                <span>Require attention</span>
+                <i class="fas fa-bell"></i><span>Require attention</span>
               </div>
             </div>
 
@@ -1323,13 +1248,11 @@
                   <div class="stat-label">Active Fleet</div>
                   <div class="stat-value" id="stat-fleet-size">-</div>
                 </div>
-                <div class="stat-icon">
-                  <i class="fas fa-truck"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-truck"></i></div>
               </div>
               <div class="stat-change">
-                <i class="fas fa-check-circle"></i>
-                <span>Operational vehicles</span>
+                <i class="fas fa-check-circle"></i
+                ><span>Operational vehicles</span>
               </div>
             </div>
 
@@ -1339,13 +1262,11 @@
                   <div class="stat-label">This Month</div>
                   <div class="stat-value" id="stat-month-cost">-</div>
                 </div>
-                <div class="stat-icon">
-                  <i class="fas fa-dollar-sign"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
               </div>
               <div class="stat-change" style="color: var(--warning)">
-                <i class="fas fa-chart-pie"></i>
-                <span>Total maintenance cost</span>
+                <i class="fas fa-chart-pie"></i
+                ><span>Total maintenance cost</span>
               </div>
             </div>
           </div>
@@ -1353,12 +1274,11 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">
-                <i class="fas fa-fire"></i>
-                Highest Maintenance Costs
+                <i class="fas fa-fire"></i> Highest Maintenance Costs
               </div>
-              <span style="color: var(--text-secondary); font-size: 0.875rem">
-                <i class="fas fa-info-circle"></i> Click for details
-              </span>
+              <span style="color: var(--text-secondary); font-size: 0.875rem"
+                ><i class="fas fa-info-circle"></i> Click for details</span
+              >
             </div>
             <div class="table-container">
               <table>
@@ -1382,8 +1302,7 @@
         <div id="page-parts" class="page hidden">
           <div class="page-header">
             <h1 class="page-title">
-              <i class="fas fa-boxes"></i>
-              Parts Inventory
+              <i class="fas fa-boxes"></i> Parts Inventory
             </h1>
             <p class="page-subtitle">
               Manage your spare parts and inventory levels
@@ -1393,12 +1312,11 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">
-                <i class="fas fa-warehouse"></i>
-                Inventory List
+                <i class="fas fa-warehouse"></i> Inventory List
               </div>
               <button
                 class="btn btn-primary admin-only mechanic-only hidden"
-                onclick="openModal('part-modal')"
+                id="btn-add-part"
               >
                 <i class="fas fa-plus"></i> Add Part
               </button>
@@ -1427,8 +1345,7 @@
         <div id="page-fleet" class="page hidden">
           <div class="page-header">
             <h1 class="page-title">
-              <i class="fas fa-truck-moving"></i>
-              Fleet Management
+              <i class="fas fa-truck-moving"></i> Fleet Management
             </h1>
             <p class="page-subtitle">Track and manage your vehicles</p>
           </div>
@@ -1436,7 +1353,7 @@
           <div style="margin-bottom: 1.5rem; text-align: right">
             <button
               class="btn btn-primary admin-only hidden"
-              onclick="openModal('truck-modal')"
+              id="btn-add-vehicle"
             >
               <i class="fas fa-plus-circle"></i> Add Vehicle
             </button>
@@ -1456,16 +1373,13 @@
             "
           >
             <div>
-              <button
-                class="btn btn-secondary"
-                onclick="navigateToPage('fleet', null)"
-              >
+              <button class="btn btn-secondary" id="btn-back-to-fleet">
                 <i class="fas fa-arrow-left"></i> Back to Fleet
               </button>
             </div>
             <button
               class="btn btn-primary admin-only mechanic-only hidden"
-              onclick="quickRepair()"
+              id="btn-quick-repair"
             >
               <i class="fas fa-plus"></i> Log Repair
             </button>
@@ -1477,8 +1391,7 @@
         <div id="page-repairs" class="page hidden">
           <div class="page-header">
             <h1 class="page-title">
-              <i class="fas fa-wrench"></i>
-              Repair History
+              <i class="fas fa-wrench"></i> Repair History
             </h1>
             <p class="page-subtitle">Track maintenance and repair records</p>
           </div>
@@ -1486,7 +1399,7 @@
           <div style="margin-bottom: 1.5rem; text-align: right">
             <button
               class="btn btn-primary admin-only mechanic-only hidden"
-              onclick="openRepairModal()"
+              id="btn-log-repair"
             >
               <i class="fas fa-plus-circle"></i> Log New Repair
             </button>
@@ -1499,8 +1412,7 @@
         <div id="page-users" class="page hidden admin-only">
           <div class="page-header">
             <h1 class="page-title">
-              <i class="fas fa-users-cog"></i>
-              User Management
+              <i class="fas fa-users-cog"></i> User Management
             </h1>
             <p class="page-subtitle">Manage team access and permissions</p>
           </div>
@@ -1508,10 +1420,9 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">
-                <i class="fas fa-users"></i>
-                Team Members
+                <i class="fas fa-users"></i> Team Members
               </div>
-              <button class="btn btn-primary" onclick="openModal('user-modal')">
+              <button class="btn btn-primary" id="btn-add-user">
                 <i class="fas fa-user-plus"></i> Create User
               </button>
             </div>
@@ -1537,8 +1448,7 @@
         <div id="page-logs" class="page hidden admin-only">
           <div class="page-header">
             <h1 class="page-title">
-              <i class="fas fa-clipboard-list"></i>
-              Activity Logs
+              <i class="fas fa-clipboard-list"></i> Activity Logs
             </h1>
             <p class="page-subtitle">System activity and audit trail</p>
           </div>
@@ -1546,8 +1456,7 @@
           <div class="card">
             <div class="card-header">
               <div class="card-title">
-                <i class="fas fa-history"></i>
-                Recent Activity
+                <i class="fas fa-history"></i> Recent Activity
               </div>
             </div>
             <div class="table-container">
@@ -1573,10 +1482,9 @@
       <div class="modal">
         <div class="modal-header">
           <div class="modal-title">
-            <i class="fas fa-box-open"></i>
-            Add New Part
+            <i class="fas fa-box-open"></i> Add New Part
           </div>
-          <button class="modal-close" onclick="closeModal('part-modal')">
+          <button class="modal-close" data-modal="part-modal">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -1664,10 +1572,10 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="closeModal('part-modal')">
+          <button class="btn btn-secondary" data-modal="part-modal">
             <i class="fas fa-times"></i> Cancel
           </button>
-          <button class="btn btn-primary" onclick="savePart()">
+          <button class="btn btn-primary" id="btn-save-part">
             <i class="fas fa-save"></i> Save Part
           </button>
         </div>
@@ -1679,10 +1587,9 @@
       <div class="modal">
         <div class="modal-header">
           <div class="modal-title">
-            <i class="fas fa-truck"></i>
-            Add Vehicle
+            <i class="fas fa-truck"></i> Add Vehicle
           </div>
-          <button class="modal-close" onclick="closeModal('truck-modal')">
+          <button class="modal-close" data-modal="truck-modal">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -1754,10 +1661,10 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="closeModal('truck-modal')">
+          <button class="btn btn-secondary" data-modal="truck-modal">
             <i class="fas fa-times"></i> Cancel
           </button>
-          <button class="btn btn-primary" onclick="saveTruck()">
+          <button class="btn btn-primary" id="btn-save-truck">
             <i class="fas fa-plus"></i> Add Vehicle
           </button>
         </div>
@@ -1769,10 +1676,9 @@
       <div class="modal">
         <div class="modal-header">
           <div class="modal-title">
-            <i class="fas fa-user-plus"></i>
-            Create New User
+            <i class="fas fa-user-plus"></i> Create New User
           </div>
-          <button class="modal-close" onclick="closeModal('user-modal')">
+          <button class="modal-close" data-modal="user-modal">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -1816,25 +1722,24 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="closeModal('user-modal')">
+          <button class="btn btn-secondary" data-modal="user-modal">
             <i class="fas fa-times"></i> Cancel
           </button>
-          <button class="btn btn-primary" onclick="saveUser()">
+          <button class="btn btn-primary" id="btn-save-user">
             <i class="fas fa-user-check"></i> Create User
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Log Repair Modal (Multi-Part) -->
+    <!-- Log Repair Modal -->
     <div id="repair-modal" class="modal-overlay">
       <div class="modal" style="max-width: 700px">
         <div class="modal-header">
           <div class="modal-title">
-            <i class="fas fa-wrench"></i>
-            Log Repair
+            <i class="fas fa-wrench"></i> Log Repair
           </div>
-          <button class="modal-close" onclick="closeModal('repair-modal')">
+          <button class="modal-close" data-modal="repair-modal">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -1892,7 +1797,7 @@
                   <button
                     type="button"
                     class="btn btn-success"
-                    onclick="addPartToRepair()"
+                    id="btn-add-part-to-repair"
                   >
                     <i class="fas fa-plus"></i> Add
                   </button>
@@ -1933,7 +1838,7 @@
                     step="0.5"
                     min="0"
                     value="0"
-                    onchange="calculateRepairTotal()"
+                    class="labor-input"
                   />
                 </div>
                 <div class="form-group">
@@ -1944,7 +1849,7 @@
                     step="0.01"
                     min="0"
                     value="75"
-                    onchange="calculateRepairTotal()"
+                    class="labor-input"
                   />
                 </div>
               </div>
@@ -1977,13 +1882,10 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button
-            class="btn btn-secondary"
-            onclick="closeModal('repair-modal')"
-          >
+          <button class="btn btn-secondary" data-modal="repair-modal">
             <i class="fas fa-times"></i> Cancel
           </button>
-          <button class="btn btn-primary" onclick="saveRepair()">
+          <button class="btn btn-primary" id="btn-save-repair">
             <i class="fas fa-save"></i> Save Repair
           </button>
         </div>
@@ -1991,7 +1893,6 @@
     </div>
 
     <script>
-      // State
       let currentUser = null;
       let authToken = localStorage.getItem("fleet_token");
       let currentRepairParts = [];
@@ -1999,7 +1900,202 @@
       let currentVehicleId = null;
       const API = window.location.origin;
 
-      // Password Visibility Toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        initEventListeners();
+        if (authToken) validateToken();
+      });
+
+      function initEventListeners() {
+        // Login
+        document
+          .getElementById("toggle-password")
+          .addEventListener("click", togglePasswordVisibility);
+        document
+          .getElementById("login-username")
+          .addEventListener("input", clearLoginErrors);
+        document
+          .getElementById("login-password")
+          .addEventListener("input", clearLoginErrors);
+        document
+          .getElementById("login-form")
+          .addEventListener("submit", handleLogin);
+
+        // Navigation
+        document.querySelectorAll(".nav-item[data-page]").forEach((item) => {
+          item.addEventListener("click", function () {
+            navigateToPage(this.dataset.page, this);
+          });
+        });
+        document.getElementById("nav-logout").addEventListener("click", logout);
+
+        // Buttons
+        document
+          .getElementById("btn-add-part")
+          .addEventListener("click", () => openModal("part-modal"));
+        document
+          .getElementById("btn-save-part")
+          .addEventListener("click", savePart);
+        document
+          .getElementById("btn-add-vehicle")
+          .addEventListener("click", () => openModal("truck-modal"));
+        document
+          .getElementById("btn-save-truck")
+          .addEventListener("click", saveTruck);
+        document
+          .getElementById("btn-add-user")
+          .addEventListener("click", () => openModal("user-modal"));
+        document
+          .getElementById("btn-save-user")
+          .addEventListener("click", saveUser);
+        document
+          .getElementById("btn-log-repair")
+          .addEventListener("click", () => openRepairModal());
+        document
+          .getElementById("btn-quick-repair")
+          .addEventListener("click", quickRepair);
+        document
+          .getElementById("btn-save-repair")
+          .addEventListener("click", saveRepair);
+        document
+          .getElementById("btn-add-part-to-repair")
+          .addEventListener("click", addPartToRepair);
+        document
+          .getElementById("btn-back-to-fleet")
+          .addEventListener("click", () => navigateToPage("fleet", null));
+
+        // Modals close buttons
+        document
+          .querySelectorAll(".modal-close, .btn-secondary[data-modal]")
+          .forEach((btn) => {
+            btn.addEventListener("click", function () {
+              closeModal(this.dataset.modal);
+            });
+          });
+
+        // Labor inputs for calculation
+        document.querySelectorAll(".labor-input").forEach((input) => {
+          input.addEventListener("change", calculateRepairTotal);
+        });
+
+        // Tables delegation
+        document
+          .getElementById("parts-table")
+          .addEventListener("click", handlePartsTableClick);
+        document
+          .getElementById("fleet-grid")
+          .addEventListener("click", handleFleetGridClick);
+        document
+          .getElementById("repairs-list")
+          .addEventListener("click", handleRepairsListClick);
+        document
+          .getElementById("users-table")
+          .addEventListener("click", handleUsersTableClick);
+        document
+          .getElementById("top-vehicles-table")
+          .addEventListener("click", handleTopVehiclesClick);
+
+        // Keyboard
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            document
+              .querySelectorAll(".modal-overlay")
+              .forEach((m) => m.classList.remove("active"));
+          }
+        });
+      }
+
+      function handlePartsTableClick(e) {
+        const btn = e.target.closest('button[data-action="delete-part"]');
+        if (btn) {
+          e.stopPropagation();
+          deletePart(btn.dataset.id);
+        }
+      }
+
+      function handleFleetGridClick(e) {
+        const card = e.target.closest(".vehicle-card");
+        const deleteBtn = e.target.closest(
+          'button[data-action="delete-truck"]',
+        );
+
+        if (deleteBtn) {
+          e.stopPropagation();
+          deleteTruck(deleteBtn.dataset.id, deleteBtn.dataset.name);
+        } else if (card) {
+          viewVehicle(card.dataset.truckid);
+        }
+      }
+
+      function handleTopVehiclesClick(e) {
+        const row = e.target.closest("tr[data-truckid]");
+        if (row) {
+          viewVehicle(row.dataset.truckid);
+        }
+      }
+
+      function handleRepairsListClick(e) {
+        // Handle any repair item actions if needed
+      }
+
+      function handleUsersTableClick(e) {
+        const toggleBtn = e.target.closest('button[data-action="toggle-user"]');
+        const deleteBtn = e.target.closest('button[data-action="delete-user"]');
+
+        if (toggleBtn) {
+          toggleUser(toggleBtn.dataset.id, toggleBtn.dataset.active === "true");
+        } else if (deleteBtn) {
+          deleteUser(deleteBtn.dataset.id);
+        }
+      }
+
+      async function handleLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById("login-username").value;
+        const password = document.getElementById("login-password").value;
+        const loginButton = document.getElementById("login-button");
+
+        clearLoginErrors();
+        loginButton.disabled = true;
+        loginButton.classList.add("btn-loading");
+        const originalText = loginButton.innerHTML;
+        loginButton.innerHTML = '<i class="fas fa-spinner"></i> Signing in...';
+
+        try {
+          const res = await fetch(`${API}/api/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            authToken = data.token;
+            currentUser = data.user;
+            localStorage.setItem("fleet_token", authToken);
+            showApp();
+          } else {
+            document.getElementById("login-password").value = "";
+            document.getElementById("login-password").focus();
+            showLoginError(data.error || "Login failed");
+
+            if (data.locked) {
+              showLoginWarning(data.error);
+              document.getElementById("login-attempts").classList.add("hidden");
+            } else if (data.remainingAttempts !== undefined) {
+              showLoginAttempts(data.remainingAttempts);
+            }
+          }
+        } catch (e) {
+          document.getElementById("login-password").value = "";
+          showLoginError("Network error");
+        } finally {
+          loginButton.disabled = false;
+          loginButton.classList.remove("btn-loading");
+          loginButton.innerHTML = originalText;
+        }
+      }
+
       function togglePasswordVisibility() {
         const passwordInput = document.getElementById("login-password");
         const toggleBtn = document.getElementById("toggle-password");
@@ -2016,82 +2112,14 @@
           icon.classList.add("fa-eye");
           toggleBtn.title = "Show Password";
         }
-
         passwordInput.focus();
       }
-
-      // Clear login errors when user starts typing
-      document
-        .getElementById("login-username")
-        .addEventListener("input", clearLoginErrors);
-      document
-        .getElementById("login-password")
-        .addEventListener("input", clearLoginErrors);
 
       function clearLoginErrors() {
         document.getElementById("login-error").classList.add("hidden");
         document.getElementById("login-warning").classList.add("hidden");
         document.getElementById("login-attempts").classList.add("hidden");
       }
-
-      // SINGLE Login Handler - Fixed duplicate issue
-      document
-        .getElementById("login-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const username = document.getElementById("login-username").value;
-          const password = document.getElementById("login-password").value;
-          const loginButton = document.getElementById("login-button");
-
-          // Clear previous errors
-          clearLoginErrors();
-
-          // Disable button during login
-          loginButton.disabled = true;
-          loginButton.classList.add("btn-loading");
-          const originalText = loginButton.innerHTML;
-          loginButton.innerHTML =
-            '<i class="fas fa-spinner"></i> Signing in...';
-
-          try {
-            const res = await fetch(`${API}/api/auth/login`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ username, password }),
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-              authToken = data.token;
-              currentUser = data.user;
-              localStorage.setItem("fleet_token", authToken);
-              showApp();
-            } else {
-              // Clear password field on error
-              document.getElementById("login-password").value = "";
-              document.getElementById("login-password").focus();
-
-              showLoginError(data.error || "Login failed");
-
-              if (data.locked) {
-                showLoginWarning(data.error);
-                document
-                  .getElementById("login-attempts")
-                  .classList.add("hidden");
-              } else if (data.remainingAttempts !== undefined) {
-                showLoginAttempts(data.remainingAttempts);
-              }
-            }
-          } catch (e) {
-            document.getElementById("login-password").value = "";
-            showLoginError("Network error");
-          } finally {
-            loginButton.disabled = false;
-            loginButton.classList.remove("btn-loading");
-            loginButton.innerHTML = originalText;
-          }
-        });
 
       function showLoginError(msg) {
         const el = document.getElementById("login-error");
@@ -2117,11 +2145,8 @@
           text.textContent = `${remaining} login attempt${remaining !== 1 ? "s" : ""} remaining`;
           el.classList.remove("danger");
         }
-
         el.classList.remove("hidden");
       }
-
-      if (authToken) validateToken();
 
       async function validateToken() {
         try {
@@ -2216,20 +2241,13 @@
         return res.json();
       }
 
-      // FIXED: New navigation function that properly handles the clicked element
       function navigateToPage(page, element) {
-        // Hide all pages
         document
           .querySelectorAll(".page")
           .forEach((p) => p.classList.add("hidden"));
-
-        // Show selected page
         const targetPage = document.getElementById(`page-${page}`);
-        if (targetPage) {
-          targetPage.classList.remove("hidden");
-        }
+        if (targetPage) targetPage.classList.remove("hidden");
 
-        // Update nav active state only if element provided
         if (element && element.classList) {
           document
             .querySelectorAll(".nav-item")
@@ -2237,7 +2255,6 @@
           element.classList.add("active");
         }
 
-        // Load page data
         if (page === "dashboard") loadDashboard();
         if (page === "parts") loadParts();
         if (page === "fleet") loadFleet();
@@ -2263,15 +2280,15 @@
             tbody.innerHTML = stats.topVehicles
               .map(
                 (v) => `
-                <tr style="cursor: pointer;" onclick="viewVehicle('${v.truckId}')">
-                  <td><strong>${v.truckId}</strong><br><small style="color: var(--text-secondary);">${v.name}</small></td>
-                  <td><span class="badge badge-info"><i class="fas fa-wrench"></i> ${v.repairCount}</span></td>
-                  <td>$${Math.round(v.totalRepairCost * 0.7).toLocaleString()}</td>
-                  <td>$${Math.round(v.totalRepairCost * 0.3).toLocaleString()}</td>
-                  <td style="font-weight: bold; color: var(--danger);">$${Math.round(v.totalRepairCost).toLocaleString()}</td>
-                  <td><button class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i> View</button></td>
-                </tr>
-              `,
+              <tr data-truckid="${v.truckId}" style="cursor: pointer;">
+                <td><strong>${v.truckId}</strong><br><small style="color: var(--text-secondary);">${v.name}</small></td>
+                <td><span class="badge badge-info"><i class="fas fa-wrench"></i> ${v.repairCount}</span></td>
+                <td>$${Math.round(v.totalRepairCost * 0.7).toLocaleString()}</td>
+                <td>$${Math.round(v.totalRepairCost * 0.3).toLocaleString()}</td>
+                <td style="font-weight: bold; color: var(--danger);">$${Math.round(v.totalRepairCost).toLocaleString()}</td>
+                <td><button class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i> View</button></td>
+              </tr>
+            `,
               )
               .join("");
           } else {
@@ -2316,7 +2333,7 @@
                   ${
                     currentUser.role !== "driver" &&
                     currentUser.role !== "viewer"
-                      ? `<button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deletePart('${p._id}')"><i class="fas fa-trash"></i></button>`
+                      ? `<button class="btn btn-sm btn-danger" data-action="delete-part" data-id="${p._id}"><i class="fas fa-trash"></i></button>`
                       : "-"
                   }
                 </td>
@@ -2386,11 +2403,9 @@
                     ? "var(--warning)"
                     : "var(--danger)";
               return `
-              <div class="vehicle-card" onclick="viewVehicle('${t.truckId}')">
+              <div class="vehicle-card" data-truckid="${t.truckId}">
                 <div class="vehicle-card-header">
-                  <div class="vehicle-type-icon">
-                    <i class="fas ${typeIcon}"></i>
-                  </div>
+                  <div class="vehicle-type-icon"><i class="fas ${typeIcon}"></i></div>
                   <div class="vehicle-id"><i class="fas fa-fingerprint"></i> ${t.truckId}</div>
                   <div class="vehicle-name">${t.name}</div>
                   <div class="vehicle-meta">
@@ -2415,7 +2430,7 @@
                   currentUser.role === "admin"
                     ? `
                 <div style="padding: 0 1.5rem 1.5rem; text-align: right;">
-                  <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteTruck('${t._id}', '${t.truckId}')">
+                  <button class="btn btn-sm btn-danger" data-action="delete-truck" data-id="${t._id}" data-name="${t.truckId}">
                     <i class="fas fa-trash"></i> Delete
                   </button>
                 </div>`
@@ -2466,7 +2481,6 @@
           currentVehicleId = truckId;
           const stats = await api(`/api/vehicles/${truckId}/stats`);
 
-          // Hide all pages first
           document
             .querySelectorAll(".page")
             .forEach((p) => p.classList.add("hidden"));
@@ -2483,15 +2497,15 @@
               ? stats.repairs
                   .map(
                     (r) => `
-                <tr>
-                  <td><i class="fas fa-calendar-day" style="color: var(--text-secondary);"></i> ${new Date(r.date).toLocaleDateString()}</td>
-                  <td>${r.issue}</td>
-                  <td><span class="badge badge-info"><i class="fas fa-cog"></i> ${r.partsUsed ? r.partsUsed.length : 0}</span></td>
-                  <td>$${Math.round(r.partsTotalCost || 0)}</td>
-                  <td>$${Math.round(r.laborCost || 0)}</td>
-                  <td style="font-weight: bold;">$${Math.round(r.totalCost || 0)}</td>
-                </tr>
-              `,
+            <tr>
+              <td><i class="fas fa-calendar-day" style="color: var(--text-secondary);"></i> ${new Date(r.date).toLocaleDateString()}</td>
+              <td>${r.issue}</td>
+              <td><span class="badge badge-info"><i class="fas fa-cog"></i> ${r.partsUsed ? r.partsUsed.length : 0}</span></td>
+              <td>$${Math.round(r.partsTotalCost || 0)}</td>
+              <td>$${Math.round(r.laborCost || 0)}</td>
+              <td style="font-weight: bold;">$${Math.round(r.totalCost || 0)}</td>
+            </tr>
+          `,
                   )
                   .join("")
               : '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No repair history</td></tr>';
@@ -2547,9 +2561,7 @@
                       <th><i class="fas fa-calculator"></i> Total</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    ${repairsHtml}
-                  </tbody>
+                  <tbody>${repairsHtml}</tbody>
                 </table>
               </div>
             </div>
@@ -2577,10 +2589,12 @@
                 <p>Start by logging your first repair record</p>
                 ${
                   currentUser.role !== "driver" && currentUser.role !== "viewer"
-                    ? `<button class="btn btn-primary" onclick="openRepairModal()" style="margin-top: 1rem;"><i class="fas fa-plus"></i> Log Repair</button>`
+                    ? `<button class="btn btn-primary" id="btn-first-repair" style="margin-top: 1rem;"><i class="fas fa-plus"></i> Log Repair</button>`
                     : ""
                 }
               </div>`;
+            const btn = document.getElementById("btn-first-repair");
+            if (btn) btn.addEventListener("click", () => openRepairModal());
             return;
           }
 
@@ -2589,25 +2603,15 @@
               const partsHtml =
                 r.partsUsed && r.partsUsed.length > 0
                   ? `<div class="repair-parts-list">
-                    ${r.partsUsed
-                      .map(
-                        (p) => `
-                      <span class="repair-part-tag">
-                        <i class="fas fa-cog"></i> ${p.partNumber} (x${p.quantity})
-                      </span>
-                    `,
-                      )
-                      .join("")}
-                   </div>`
+              ${r.partsUsed.map((p) => `<span class="repair-part-tag"><i class="fas fa-cog"></i> ${p.partNumber} (x${p.quantity})</span>`).join("")}
+            </div>`
                   : "";
 
               return `
             <div class="repair-item">
               <div class="repair-header">
                 <div class="repair-vehicle">
-                  <div class="repair-vehicle-icon">
-                    <i class="fas fa-truck"></i>
-                  </div>
+                  <div class="repair-vehicle-icon"><i class="fas fa-truck"></i></div>
                   <div>
                     <div style="font-weight: 700; font-size: 1.125rem;">${r.truckName || r.truckId}</div>
                     <div style="color: var(--text-secondary); font-size: 0.875rem;">
@@ -2616,15 +2620,12 @@
                     </div>
                   </div>
                 </div>
-                <div class="repair-cost">
-                  <i class="fas fa-dollar-sign" style="font-size: 1rem;"></i> ${Math.round(r.totalCost || 0)}
-                </div>
+                <div class="repair-cost"><i class="fas fa-dollar-sign" style="font-size: 1rem;"></i> ${Math.round(r.totalCost || 0)}</div>
               </div>
               <div style="margin-bottom: 0.5rem;"><strong><i class="fas fa-clipboard" style="color: var(--primary);"></i></strong> ${r.issue}</div>
               ${partsHtml}
               ${r.notes ? `<div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.875rem;"><i class="fas fa-sticky-note"></i> ${r.notes}</div>` : ""}
-            </div>
-          `;
+            </div>`;
             })
             .join("");
         } catch (e) {
@@ -2731,11 +2732,7 @@
       function updatePartsList() {
         const container = document.getElementById("repair-parts-list");
         if (currentRepairParts.length === 0) {
-          container.innerHTML = `
-            <div class="empty-state" style="padding: 2rem;">
-              <i class="fas fa-box-open" style="font-size: 3rem;"></i>
-              <p>No parts added yet</p>
-            </div>`;
+          container.innerHTML = `<div class="empty-state" style="padding: 2rem;"><i class="fas fa-box-open" style="font-size: 3rem;"></i><p>No parts added yet</p></div>`;
           return;
         }
 
@@ -2751,13 +2748,18 @@
                 <div style="font-size: 0.875rem; color: var(--primary);">${p.quantity} x $${p.unitCost.toFixed(2)} = $${p.totalCost.toFixed(2)}</div>
               </div>
             </div>
-            <button type="button" class="btn btn-sm btn-danger" onclick="removePartFromRepair(${index})">
-              <i class="fas fa-trash"></i>
-            </button>
+            <button type="button" class="btn btn-sm btn-danger remove-part-btn" data-index="${index}"><i class="fas fa-trash"></i></button>
           </div>
         `,
           )
           .join("");
+
+        // Add event listeners to remove buttons
+        container.querySelectorAll(".remove-part-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            removePartFromRepair(parseInt(this.dataset.index));
+          });
+        });
 
         document.getElementById("parts-used-json").value =
           JSON.stringify(currentRepairParts);
@@ -2851,15 +2853,12 @@
                 <td>${u.isActive !== false ? '<span class="badge badge-success"><i class="fas fa-check"></i> Active</span>' : '<span class="badge badge-danger"><i class="fas fa-ban"></i> Disabled</span>'}</td>
                 <td><i class="fas fa-calendar" style="color: var(--text-secondary);"></i> ${new Date(u.createdAt).toLocaleDateString()}</td>
                 <td>
-                  <button class="btn btn-sm btn-secondary" onclick="toggleUser('${u._id}', ${u.isActive === false ? "true" : "false"})">
+                  <button class="btn btn-sm btn-secondary" data-action="toggle-user" data-id="${u._id}" data-active="${u.isActive !== false}">
                     <i class="fas ${u.isActive === false ? "fa-check" : "fa-ban"}"></i> ${u.isActive === false ? "Enable" : "Disable"}
                   </button>
                   ${
                     currentUser._id !== u._id
-                      ? `
-                  <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')" style="margin-left: 0.5rem;">
-                    <i class="fas fa-trash"></i>
-                  </button>`
+                      ? `<button class="btn btn-sm btn-danger" data-action="delete-user" data-id="${u._id}" style="margin-left: 0.5rem;"><i class="fas fa-trash"></i></button>`
                       : '<span style="font-size: 0.75rem; color: var(--text-secondary); margin-left: 0.5rem;">(You)</span>'
                   }
                 </td>
@@ -2979,31 +2978,6 @@
         document.getElementById("app-alerts").appendChild(div);
         setTimeout(() => div.remove(), 5000);
       }
-
-      async function exportData() {
-        try {
-          const data = await api("/api/export");
-          const blob = new Blob([JSON.stringify(data, null, 2)], {
-            type: "application/json",
-          });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `fleet-export-${new Date().toISOString().split("T")[0]}.json`;
-          a.click();
-          showAlert("Data exported successfully!", "success");
-        } catch (e) {
-          showAlert("Export failed", "error");
-        }
-      }
-
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          document
-            .querySelectorAll(".modal-overlay")
-            .forEach((m) => m.classList.remove("active"));
-        }
-      });
     </script>
   </body>
 </html>
