@@ -719,6 +719,16 @@
         color: var(--text);
       }
 
+      /* Modal Footer - Fixed */
+      .modal-footer {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        background: #f8fafc;
+      }
+
       /* Form Improvements */
       .form-row {
         display: grid;
@@ -1079,9 +1089,9 @@
       }
     </style>
     <base target="_blank" />
+    <base target="_blank" />
   </head>
   <body>
-    <!-- Login Page -->
     <!-- Login Page -->
     <div id="login-page" class="login-container">
       <div class="login-box">
@@ -2011,6 +2021,7 @@
         document.getElementById("login-attempts").classList.add("hidden");
       }
 
+      // SINGLE Login Handler - Fixed duplicate issue
       document
         .getElementById("login-form")
         .addEventListener("submit", async (e) => {
@@ -2115,41 +2126,6 @@
         }
       }
 
-      document
-        .getElementById("login-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const username = document.getElementById("login-username").value;
-          const password = document.getElementById("login-password").value;
-
-          try {
-            const res = await fetch(`${API}/api/auth/login`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ username, password }),
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-              authToken = data.token;
-              currentUser = data.user;
-              localStorage.setItem("fleet_token", authToken);
-              showApp();
-            } else {
-              showLoginError(data.error || "Login failed");
-            }
-          } catch (e) {
-            showLoginError("Network error");
-          }
-        });
-
-      function showLoginError(msg) {
-        const el = document.getElementById("login-error");
-        document.getElementById("login-error-text").textContent = msg;
-        el.classList.remove("hidden");
-      }
-
       function showApp() {
         document.getElementById("login-page").style.display = "none";
         document.getElementById("app-container").classList.add("active");
@@ -2236,7 +2212,9 @@
         document
           .querySelectorAll(".nav-item")
           .forEach((n) => n.classList.remove("active"));
-        event.target.closest(".nav-item")?.classList.add("active");
+        if (event && event.target) {
+          event.target.closest(".nav-item")?.classList.add("active");
+        }
 
         if (page === "dashboard") loadDashboard();
         if (page === "parts") loadParts();
