@@ -77,7 +77,7 @@ const PartSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-// TRUCK SCHEMA with cost tracking
+// TRUCK SCHEMA
 const TruckSchema = new mongoose.Schema({
   truckId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
@@ -101,7 +101,7 @@ const TruckSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-// REPAIR SCHEMA with cost breakdown
+// REPAIR SCHEMA
 const RepairSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   truckId: { type: String, required: true },
@@ -111,20 +111,20 @@ const RepairSchema = new mongoose.Schema({
     {
       partId: String,
       partNumber: String,
+      description: String,
       quantity: Number,
       unitCost: Number,
       totalCost: Number,
     },
   ],
   partsTotalCost: { type: Number, default: 0 },
-  laborHours: Number,
+  laborHours: { type: Number, default: 0 },
   laborRate: { type: Number, default: 75 },
   laborCost: { type: Number, default: 0 },
   totalCost: { type: Number, default: 0 },
   mechanic: String,
   mechanicId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   notes: String,
-  photos: [String],
   status: {
     type: String,
     enum: ["completed", "in-progress", "scheduled"],
@@ -221,7 +221,6 @@ app.post("/api/auth/login", async (req, res) => {
       token,
       user: {
         _id: user._id,
-        id: user._id,
         username: user.username,
         role: user.role,
         name: user.name,
@@ -253,7 +252,6 @@ app.post(
   async (req, res) => {
     try {
       const { username, password, role, name, email, phone } = req.body;
-
       const existingUser = await User.findOne({ username });
       if (existingUser)
         return res.status(400).json({ error: "Username already exists" });
@@ -315,7 +313,7 @@ app.get(
   },
 );
 
-// Update user status (Enable/Disable) - PATCH method
+// Update user status
 app.patch(
   "/api/users/:id",
   authenticate,
@@ -323,8 +321,6 @@ app.patch(
   async (req, res) => {
     try {
       const { isActive } = req.body;
-
-      // Prevent disabling yourself
       if (req.params.id === req.user.userId && isActive === false) {
         return res
           .status(400)
@@ -336,7 +332,6 @@ app.patch(
         { isActive },
         { new: true },
       ).select("-password");
-
       if (!user) return res.status(404).json({ error: "User not found" });
 
       await logActivity(
@@ -358,47 +353,13 @@ app.patch(
   },
 );
 
-// Keep the old PUT endpoint for backward compatibility
-app.put(
-  "/api/users/:id/status",
-  authenticate,
-  requireRole(["admin"]),
-  async (req, res) => {
-    try {
-      const { isActive } = req.body;
-
-      if (req.params.id === req.user.userId && isActive === false) {
-        return res
-          .status(400)
-          .json({ error: "Cannot disable your own account" });
-      }
-
-      await User.findByIdAndUpdate(req.params.id, { isActive });
-
-      await logActivity(
-        req.user.userId,
-        req.user.username,
-        isActive ? "USER_ENABLED" : "USER_DISABLED",
-        "User",
-        req.params.id,
-        { isActive },
-      );
-
-      res.json({ message: "User updated" });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-);
-
-// Delete user permanently
+// Delete user
 app.delete(
   "/api/users/:id",
   authenticate,
   requireRole(["admin"]),
   async (req, res) => {
     try {
-      // Prevent deleting yourself
       if (req.params.id === req.user.userId) {
         return res
           .status(400)
@@ -409,7 +370,6 @@ app.delete(
       if (!user) return res.status(404).json({ error: "User not found" });
 
       await User.findByIdAndDelete(req.params.id);
-
       await logActivity(
         req.user.userId,
         req.user.username,
@@ -427,7 +387,6 @@ app.delete(
 );
 
 // STATS & DASHBOARD
-
 app.get("/api/stats", authenticate, async (req, res) => {
   try {
     const [totalParts, lowStock, fleetSize] = await Promise.all([
@@ -438,7 +397,6 @@ app.get("/api/stats", authenticate, async (req, res) => {
 
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
-
     const thisMonthRepairs = await Repair.find({
       date: { $gte: startOfMonth },
     });
@@ -473,18 +431,13 @@ app.get("/api/vehicles/:truckId/stats", authenticate, async (req, res) => {
     if (!truck) return res.status(404).json({ error: "Vehicle not found" });
 
     const repairs = await Repair.find({ truckId }).sort({ date: -1 });
-
-    res.json({
-      truck,
-      repairs,
-    });
+    res.json({ truck, repairs });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // PARTS API
-
 app.get("/api/parts", authenticate, async (req, res) => {
   try {
     const parts = await Part.find().sort({ updatedAt: -1 });
@@ -569,7 +522,6 @@ app.delete(
 );
 
 // TRUCKS API
-
 app.get("/api/trucks", authenticate, async (req, res) => {
   try {
     const trucks = await Truck.find().sort({ createdAt: -1 });
@@ -603,22 +555,6 @@ app.post(
   },
 );
 
-app.put(
-  "/api/trucks/:id",
-  authenticate,
-  requireRole(["admin"]),
-  async (req, res) => {
-    try {
-      const truck = await Truck.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-      });
-      res.json(truck);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  },
-);
-
 app.delete(
   "/api/trucks/:id",
   authenticate,
@@ -628,7 +564,6 @@ app.delete(
       const truck = await Truck.findById(req.params.id);
       if (!truck) return res.status(404).json({ error: "Vehicle not found" });
 
-      // Check for repairs but allow force delete via query param
       const hasRepairs = await Repair.findOne({ truckId: truck.truckId });
       if (hasRepairs && !req.query.force) {
         return res
@@ -639,13 +574,11 @@ app.delete(
           });
       }
 
-      // Delete repairs if force deleting
       if (hasRepairs && req.query.force) {
         await Repair.deleteMany({ truckId: truck.truckId });
       }
 
       await Truck.findByIdAndDelete(req.params.id);
-
       await logActivity(
         req.user.userId,
         req.user.username,
@@ -654,7 +587,6 @@ app.delete(
         truck.truckId,
         { force: !!req.query.force },
       );
-
       res.json({ message: "Vehicle deleted" });
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -662,8 +594,7 @@ app.delete(
   },
 );
 
-// REPAIRS API
-
+// REPAIRS API - Updated for multiple parts
 app.get("/api/repairs", authenticate, async (req, res) => {
   try {
     let query = {};
@@ -672,14 +603,10 @@ app.get("/api/repairs", authenticate, async (req, res) => {
     }
     const repairs = await Repair.find(query).sort({ date: -1 }).limit(100);
 
-    // Enrich with truck names
     const repairsWithTruckInfo = await Promise.all(
       repairs.map(async (r) => {
         const truck = await Truck.findOne({ truckId: r.truckId });
-        return {
-          ...r.toObject(),
-          truckName: truck ? truck.name : r.truckId,
-        };
+        return { ...r.toObject(), truckName: truck ? truck.name : r.truckId };
       }),
     );
 
@@ -699,62 +626,66 @@ app.post(
         truckId,
         date,
         issue,
-        laborCost,
-        partId,
-        quantityUsed,
+        laborHours,
+        laborRate,
         mechanic,
         notes,
+        partsUsed,
       } = req.body;
 
       // Verify truck exists
       const truck = await Truck.findOne({ truckId });
       if (!truck) return res.status(404).json({ error: "Vehicle not found" });
 
+      // Process multiple parts
       let partsTotalCost = 0;
-      const partsUsed = [];
+      const processedParts = [];
 
-      // Handle single part from frontend form
-      if (partId && quantityUsed > 0) {
-        const part = await Part.findById(partId);
-        if (part) {
-          if (part.quantity < quantityUsed) {
-            return res.status(400).json({
-              error: `Insufficient stock for ${part.partNumber}. Only ${part.quantity} available`,
+      if (partsUsed && Array.isArray(partsUsed) && partsUsed.length > 0) {
+        for (const item of partsUsed) {
+          const part = await Part.findById(item.partId);
+          if (part) {
+            // Check stock
+            if (part.quantity < item.quantity) {
+              return res.status(400).json({
+                error: `Insufficient stock for ${part.partNumber}. Only ${part.quantity} available`,
+              });
+            }
+
+            // Deduct from inventory
+            part.quantity -= item.quantity;
+            await part.save();
+
+            // Add to processed parts
+            processedParts.push({
+              partId: part._id,
+              partNumber: part.partNumber,
+              description: part.description,
+              quantity: item.quantity,
+              unitCost: item.unitCost || part.cost || 0,
+              totalCost: (item.unitCost || part.cost || 0) * item.quantity,
             });
+
+            partsTotalCost += (item.unitCost || part.cost || 0) * item.quantity;
           }
-
-          const unitCost = part.cost || 0;
-          const totalCost = unitCost * quantityUsed;
-
-          partsUsed.push({
-            partId: part._id,
-            partNumber: part.partNumber,
-            quantity: parseInt(quantityUsed),
-            unitCost: unitCost,
-            totalCost: totalCost,
-          });
-
-          partsTotalCost = totalCost;
-
-          // Update inventory
-          part.quantity -= parseInt(quantityUsed);
-          await part.save();
         }
       }
 
       // Calculate costs
-      const laborCostNum = parseFloat(laborCost) || 0;
-      const totalCost = partsTotalCost + laborCostNum;
+      const laborHrs = parseFloat(laborHours) || 0;
+      const rate = parseFloat(laborRate) || 75;
+      const laborCost = laborHrs * rate;
+      const totalCost = partsTotalCost + laborCost;
 
       const repair = new Repair({
         truckId,
         date: date || new Date(),
         issue,
-        partsUsed,
+        partsUsed: processedParts,
         partsTotalCost,
-        laborCost: laborCostNum,
-        laborHours: laborCostNum / 75,
-        laborRate: 75,
+        laborHours: laborHrs,
+        laborRate: rate,
+        laborCost,
         totalCost,
         mechanic: mechanic || req.user.username,
         mechanicId: req.user.userId,
@@ -764,8 +695,6 @@ app.post(
       });
 
       await repair.save();
-
-      // Update truck stats
       await updateTruckCosts(truckId);
 
       await logActivity(
@@ -778,7 +707,7 @@ app.post(
           truckId,
           truckName: truck.name,
           totalCost,
-          issue: issue.substring(0, 50),
+          partsCount: processedParts.length,
         },
       );
 
@@ -827,8 +756,7 @@ app.delete(
   },
 );
 
-// ACTIVITY LOGS (Admin)
-
+// ACTIVITY LOGS
 app.get(
   "/api/activity-logs",
   authenticate,
@@ -846,8 +774,7 @@ app.get(
   },
 );
 
-// EXPORT (Admin)
-
+// EXPORT
 app.get(
   "/api/export",
   authenticate,
@@ -882,7 +809,7 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`Secure Fleet Tracker running on port ${PORT}`);
 });
 
-// Create default admin if no users exist
+// Create default admin
 const createDefaultAdmin = async () => {
   try {
     const count = await User.countDocuments();
@@ -896,7 +823,6 @@ const createDefaultAdmin = async () => {
         isActive: true,
       });
       console.log("Default admin created: username=admin, password=admin123");
-      console.log("Please change this password after first login!");
     }
   } catch (err) {
     console.error("Error creating default admin:", err);
