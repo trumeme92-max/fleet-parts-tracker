@@ -375,6 +375,7 @@
         color: #94a3b8;
         font-weight: 500;
         position: relative;
+        user-select: none;
       }
       .nav-item:hover {
         background: var(--sidebar-hover);
@@ -1220,27 +1221,36 @@
         </div>
 
         <nav class="nav-menu">
-          <div class="nav-item active" onclick="showPage('dashboard')">
+          <div
+            class="nav-item active"
+            onclick="navigateToPage('dashboard', this)"
+          >
             <i class="fas fa-chart-line"></i>
             <span>Dashboard</span>
           </div>
-          <div class="nav-item" onclick="showPage('parts')">
+          <div class="nav-item" onclick="navigateToPage('parts', this)">
             <i class="fas fa-boxes"></i>
             <span>Parts Inventory</span>
           </div>
-          <div class="nav-item" onclick="showPage('repairs')">
+          <div class="nav-item" onclick="navigateToPage('repairs', this)">
             <i class="fas fa-wrench"></i>
             <span>Repairs</span>
           </div>
-          <div class="nav-item" onclick="showPage('fleet')">
+          <div class="nav-item" onclick="navigateToPage('fleet', this)">
             <i class="fas fa-truck-moving"></i>
             <span>Fleet</span>
           </div>
-          <div class="nav-item admin-only hidden" onclick="showPage('users')">
+          <div
+            class="nav-item admin-only hidden"
+            onclick="navigateToPage('users', this)"
+          >
             <i class="fas fa-users-cog"></i>
             <span>User Management</span>
           </div>
-          <div class="nav-item admin-only hidden" onclick="showPage('logs')">
+          <div
+            class="nav-item admin-only hidden"
+            onclick="navigateToPage('logs', this)"
+          >
             <i class="fas fa-clipboard-list"></i>
             <span>Activity Logs</span>
           </div>
@@ -1446,7 +1456,10 @@
             "
           >
             <div>
-              <button class="btn btn-secondary" onclick="showPage('fleet')">
+              <button
+                class="btn btn-secondary"
+                onclick="navigateToPage('fleet', null)"
+              >
                 <i class="fas fa-arrow-left"></i> Back to Fleet
               </button>
             </div>
@@ -1583,13 +1596,13 @@
                 <label><i class="fas fa-tags"></i> Category *</label>
                 <select name="category" required>
                   <option value="">Select category...</option>
-                  <option value="Engine">🔧 Engine</option>
-                  <option value="Transmission">⚙️ Transmission</option>
-                  <option value="Brakes">🛑 Brakes</option>
-                  <option value="Electrical">⚡ Electrical</option>
-                  <option value="Body">🚗 Body</option>
-                  <option value="Tires">🛞 Tires</option>
-                  <option value="Other">📦 Other</option>
+                  <option value="Engine">Engine</option>
+                  <option value="Transmission">Transmission</option>
+                  <option value="Brakes">Brakes</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Body">Body</option>
+                  <option value="Tires">Tires</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>
@@ -1688,8 +1701,8 @@
               <div class="form-group">
                 <label><i class="fas fa-car-side"></i> Type *</label>
                 <select name="type" required>
-                  <option value="truck">🚛 Truck</option>
-                  <option value="trailer">🚚 Trailer</option>
+                  <option value="truck">Truck</option>
+                  <option value="trailer">Trailer</option>
                 </select>
               </div>
             </div>
@@ -1779,10 +1792,10 @@
               <div class="form-group">
                 <label><i class="fas fa-id-badge"></i> Role *</label>
                 <select name="role" required>
-                  <option value="mechanic">🔧 Mechanic</option>
-                  <option value="driver">🚗 Driver</option>
-                  <option value="viewer">👁️ Viewer</option>
-                  <option value="admin">👑 Admin</option>
+                  <option value="mechanic">Mechanic</option>
+                  <option value="driver">Driver</option>
+                  <option value="viewer">Viewer</option>
+                  <option value="admin">Admin</option>
                 </select>
               </div>
               <div class="form-group">
@@ -2203,19 +2216,28 @@
         return res.json();
       }
 
-      function showPage(page) {
+      // FIXED: New navigation function that properly handles the clicked element
+      function navigateToPage(page, element) {
+        // Hide all pages
         document
           .querySelectorAll(".page")
           .forEach((p) => p.classList.add("hidden"));
-        document.getElementById(`page-${page}`).classList.remove("hidden");
 
-        document
-          .querySelectorAll(".nav-item")
-          .forEach((n) => n.classList.remove("active"));
-        if (event && event.target) {
-          event.target.closest(".nav-item")?.classList.add("active");
+        // Show selected page
+        const targetPage = document.getElementById(`page-${page}`);
+        if (targetPage) {
+          targetPage.classList.remove("hidden");
         }
 
+        // Update nav active state only if element provided
+        if (element && element.classList) {
+          document
+            .querySelectorAll(".nav-item")
+            .forEach((n) => n.classList.remove("active"));
+          element.classList.add("active");
+        }
+
+        // Load page data
         if (page === "dashboard") loadDashboard();
         if (page === "parts") loadParts();
         if (page === "fleet") loadFleet();
@@ -2237,7 +2259,7 @@
             "$" + Math.round(stats.monthCost).toLocaleString();
 
           const tbody = document.getElementById("top-vehicles-table");
-          if (stats.topVehicles?.length) {
+          if (stats.topVehicles && stats.topVehicles.length) {
             tbody.innerHTML = stats.topVehicles
               .map(
                 (v) => `
@@ -2252,9 +2274,12 @@
               `,
               )
               .join("");
+          } else {
+            tbody.innerHTML =
+              '<tr><td colspan="6" style="text-align: center;">No data available</td></tr>';
           }
         } catch (e) {
-          console.error(e);
+          console.error("Dashboard load error:", e);
         }
       }
 
@@ -2263,6 +2288,13 @@
           const parts = await api("/api/parts");
           availableParts = parts;
           const tbody = document.getElementById("parts-table");
+
+          if (!parts || parts.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="8" style="text-align: center; padding: 2rem;">No parts in inventory</td></tr>';
+            return;
+          }
+
           tbody.innerHTML = parts
             .map((p) => {
               const low = p.quantity <= p.minStock;
@@ -2284,7 +2316,7 @@
                   ${
                     currentUser.role !== "driver" &&
                     currentUser.role !== "viewer"
-                      ? `<button class="btn btn-sm btn-danger" onclick="deletePart('${p._id}')"><i class="fas fa-trash"></i></button>`
+                      ? `<button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deletePart('${p._id}')"><i class="fas fa-trash"></i></button>`
                       : "-"
                   }
                 </td>
@@ -2293,7 +2325,8 @@
             })
             .join("");
         } catch (e) {
-          console.error(e);
+          console.error("Parts load error:", e);
+          showAlert("Failed to load parts", "error");
         }
       }
 
@@ -2335,6 +2368,13 @@
         try {
           const trucks = await api("/api/trucks");
           const grid = document.getElementById("fleet-grid");
+
+          if (!trucks || trucks.length === 0) {
+            grid.innerHTML =
+              '<div style="text-align: center; padding: 4rem; color: var(--text-secondary);"><i class="fas fa-truck" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i><h3>No Vehicles</h3><p>Add your first vehicle to get started</p></div>';
+            return;
+          }
+
           grid.innerHTML = trucks
             .map((t) => {
               const typeIcon =
@@ -2363,11 +2403,11 @@
                 </div>
                 <div class="vehicle-stats">
                   <div class="vehicle-stat">
-                    <div class="vehicle-stat-value"><i class="fas fa-wrench" style="font-size: 1rem; color: var(--primary);"></i> ${t.repairCount}</div>
+                    <div class="vehicle-stat-value"><i class="fas fa-wrench" style="font-size: 1rem; color: var(--primary);"></i> ${t.repairCount || 0}</div>
                     <div class="vehicle-stat-label">Repairs</div>
                   </div>
                   <div class="vehicle-stat">
-                    <div class="vehicle-stat-value danger">$${Math.round(t.totalRepairCost).toLocaleString()}</div>
+                    <div class="vehicle-stat-value danger">$${Math.round(t.totalRepairCost || 0).toLocaleString()}</div>
                     <div class="vehicle-stat-label">Total Cost</div>
                   </div>
                 </div>
@@ -2386,7 +2426,8 @@
             })
             .join("");
         } catch (e) {
-          console.error(e);
+          console.error("Fleet load error:", e);
+          showAlert("Failed to load fleet", "error");
         }
       }
 
@@ -2424,6 +2465,8 @@
         try {
           currentVehicleId = truckId;
           const stats = await api(`/api/vehicles/${truckId}/stats`);
+
+          // Hide all pages first
           document
             .querySelectorAll(".page")
             .forEach((p) => p.classList.add("hidden"));
@@ -2434,38 +2477,56 @@
           const typeIcon =
             stats.truck.type === "truck" ? "fa-truck-moving" : "fa-trailer";
           const content = document.getElementById("vehicle-detail-content");
+
+          const repairsHtml =
+            stats.repairs && stats.repairs.length > 0
+              ? stats.repairs
+                  .map(
+                    (r) => `
+                <tr>
+                  <td><i class="fas fa-calendar-day" style="color: var(--text-secondary);"></i> ${new Date(r.date).toLocaleDateString()}</td>
+                  <td>${r.issue}</td>
+                  <td><span class="badge badge-info"><i class="fas fa-cog"></i> ${r.partsUsed ? r.partsUsed.length : 0}</span></td>
+                  <td>$${Math.round(r.partsTotalCost || 0)}</td>
+                  <td>$${Math.round(r.laborCost || 0)}</td>
+                  <td style="font-weight: bold;">$${Math.round(r.totalCost || 0)}</td>
+                </tr>
+              `,
+                  )
+                  .join("")
+              : '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No repair history</td></tr>';
+
           content.innerHTML = `
-            <div class="vehicle-header" style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
+            <div style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 2rem; border: 1px solid var(--border);">
               <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
                 <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
                   <i class="fas ${typeIcon}"></i>
                 </div>
                 <div>
-                  <div class="vehicle-title">${stats.truck.name}</div>
-                  <div class="vehicle-meta">
-                    <span><i class="fas fa-fingerprint"></i> ${stats.truck.truckId}</span>
-                    <span><i class="fas fa-car-side"></i> ${stats.truck.type}</span>
-                    <span><i class="fas fa-circle" style="color: ${stats.truck.status === "active" ? "var(--success)" : "var(--warning)"};"></i> ${stats.truck.status}</span>
-                    ${stats.truck.vin ? `<span><i class="fas fa-barcode"></i> ${stats.truck.vin}</span>` : ""}
+                  <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem;">${stats.truck.name}</div>
+                  <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                    <span style="margin-right: 1rem;"><i class="fas fa-fingerprint"></i> ${stats.truck.truckId}</span>
+                    <span style="margin-right: 1rem;"><i class="fas fa-car-side"></i> ${stats.truck.type}</span>
+                    <span><i class="fas fa-circle" style="color: ${stats.truck.status === "active" ? "var(--success)" : "var(--warning)"}; font-size: 0.5rem;"></i> ${stats.truck.status}</span>
                   </div>
                 </div>
               </div>
-              <div class="cost-breakdown">
-                <div class="cost-item">
-                  <div class="cost-label"><i class="fas fa-wrench"></i> Total Repairs</div>
-                  <div class="cost-value" style="color: var(--text);">${stats.truck.repairCount}</div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                <div style="text-align: center;">
+                  <div style="font-size: 1.5rem; font-weight: 700;">${stats.truck.repairCount || 0}</div>
+                  <div style="font-size: 0.875rem; color: var(--text-secondary);">Total Repairs</div>
                 </div>
-                <div class="cost-item">
-                  <div class="cost-label"><i class="fas fa-box"></i> Parts Cost</div>
-                  <div class="cost-value">$${Math.round(stats.truck.totalPartsCost).toLocaleString()}</div>
+                <div style="text-align: center;">
+                  <div style="font-size: 1.5rem; font-weight: 700; color: var(--danger);">$${Math.round(stats.truck.totalPartsCost || 0).toLocaleString()}</div>
+                  <div style="font-size: 0.875rem; color: var(--text-secondary);">Parts Cost</div>
                 </div>
-                <div class="cost-item">
-                  <div class="cost-label"><i class="fas fa-user-clock"></i> Labor Cost</div>
-                  <div class="cost-value">$${Math.round(stats.truck.totalLaborCost).toLocaleString()}</div>
+                <div style="text-align: center;">
+                  <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">$${Math.round(stats.truck.totalLaborCost || 0).toLocaleString()}</div>
+                  <div style="font-size: 0.875rem; color: var(--text-secondary);">Labor Cost</div>
                 </div>
-                <div class="cost-item">
-                  <div class="cost-label"><i class="fas fa-calculator"></i> Total Spent</div>
-                  <div class="cost-value" style="font-size: 2rem;">$${Math.round(stats.truck.totalRepairCost).toLocaleString()}</div>
+                <div style="text-align: center;">
+                  <div style="font-size: 2rem; font-weight: 700; color: var(--primary);">$${Math.round(stats.truck.totalRepairCost || 0).toLocaleString()}</div>
+                  <div style="font-size: 0.875rem; color: var(--text-secondary);">Total Spent</div>
                 </div>
               </div>
             </div>
@@ -2487,26 +2548,14 @@
                     </tr>
                   </thead>
                   <tbody>
-                    ${stats.repairs
-                      .map(
-                        (r) => `
-                      <tr>
-                        <td><i class="fas fa-calendar-day" style="color: var(--text-secondary);"></i> ${new Date(r.date).toLocaleDateString()}</td>
-                        <td>${r.issue}</td>
-                        <td><span class="badge badge-info"><i class="fas fa-cog"></i> ${r.partsUsed ? r.partsUsed.length : 0}</span></td>
-                        <td>$${Math.round(r.partsTotalCost || 0)}</td>
-                        <td>$${Math.round(r.laborCost || 0)}</td>
-                        <td style="font-weight: bold;">$${Math.round(r.totalCost || 0)}</td>
-                      </tr>
-                    `,
-                      )
-                      .join("")}
+                    ${repairsHtml}
                   </tbody>
                 </table>
               </div>
             </div>
           `;
         } catch (e) {
+          console.error("Vehicle detail error:", e);
           showAlert("Failed to load vehicle details", "error");
         }
       }
@@ -2520,7 +2569,7 @@
         try {
           const repairs = await api("/api/repairs");
           const container = document.getElementById("repairs-list");
-          if (!repairs.length) {
+          if (!repairs || !repairs.length) {
             container.innerHTML = `
               <div class="empty-state">
                 <i class="fas fa-clipboard-check"></i>
@@ -2536,8 +2585,23 @@
           }
 
           container.innerHTML = repairs
-            .map(
-              (r) => `
+            .map((r) => {
+              const partsHtml =
+                r.partsUsed && r.partsUsed.length > 0
+                  ? `<div class="repair-parts-list">
+                    ${r.partsUsed
+                      .map(
+                        (p) => `
+                      <span class="repair-part-tag">
+                        <i class="fas fa-cog"></i> ${p.partNumber} (x${p.quantity})
+                      </span>
+                    `,
+                      )
+                      .join("")}
+                   </div>`
+                  : "";
+
+              return `
             <div class="repair-item">
               <div class="repair-header">
                 <div class="repair-vehicle">
@@ -2557,30 +2621,14 @@
                 </div>
               </div>
               <div style="margin-bottom: 0.5rem;"><strong><i class="fas fa-clipboard" style="color: var(--primary);"></i></strong> ${r.issue}</div>
-              ${
-                r.partsUsed && r.partsUsed.length > 0
-                  ? `
-                <div class="repair-parts-list">
-                  ${r.partsUsed
-                    .map(
-                      (p) => `
-                    <span class="repair-part-tag">
-                      <i class="fas fa-cog"></i> ${p.partNumber} (x${p.quantity})
-                    </span>
-                  `,
-                    )
-                    .join("")}
-                </div>
-              `
-                  : ""
-              }
+              ${partsHtml}
               ${r.notes ? `<div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.875rem;"><i class="fas fa-sticky-note"></i> ${r.notes}</div>` : ""}
             </div>
-          `,
-            )
+          `;
+            })
             .join("");
         } catch (e) {
-          console.error(e);
+          console.error("Repairs load error:", e);
         }
       }
 
@@ -2592,14 +2640,14 @@
             api("/api/trucks"),
             api("/api/parts"),
           ]);
-          availableParts = parts;
+          availableParts = parts || [];
 
           const truckSelect = document.getElementById("repair-truck-select");
           const partSelect = document.getElementById("temp-part-select");
 
           truckSelect.innerHTML =
             '<option value="">Select Vehicle...</option>' +
-            trucks
+            (trucks || [])
               .map(
                 (t) =>
                   `<option value="${t.truckId}" ${preselectedTruckId === t.truckId ? "selected" : ""}>${t.truckId} - ${t.name}</option>`,
@@ -2608,7 +2656,7 @@
 
           partSelect.innerHTML =
             '<option value="">Select Part...</option>' +
-            parts
+            (parts || [])
               .filter((p) => p.quantity > 0)
               .map(
                 (p) =>
@@ -2622,6 +2670,7 @@
 
           openModal("repair-modal");
         } catch (e) {
+          console.error("Repair modal error:", e);
           showAlert("Failed to load data", "error");
         }
       }
@@ -2777,6 +2826,13 @@
         try {
           const users = await api("/api/users");
           const tbody = document.getElementById("users-table");
+
+          if (!users || users.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No users found</td></tr>';
+            return;
+          }
+
           tbody.innerHTML = users
             .map((u) => {
               const roleIcon =
@@ -2812,7 +2868,7 @@
             })
             .join("");
         } catch (e) {
-          console.error(e);
+          console.error("Users load error:", e);
         }
       }
 
@@ -2863,6 +2919,13 @@
         try {
           const logs = await api("/api/activity-logs");
           const tbody = document.getElementById("logs-table");
+
+          if (!logs || logs.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="4" style="text-align: center; padding: 2rem;">No activity logs</td></tr>';
+            return;
+          }
+
           tbody.innerHTML = logs
             .map((l) => {
               const actionIcons = {
@@ -2889,7 +2952,7 @@
             })
             .join("");
         } catch (e) {
-          console.error(e);
+          console.error("Logs load error:", e);
         }
       }
 
