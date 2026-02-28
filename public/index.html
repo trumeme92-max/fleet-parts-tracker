@@ -251,48 +251,6 @@
         padding: 0;
         border-radius: 50%;
       }
-      .btn-group {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
-      .btn-group .btn {
-        flex: 1;
-        min-width: 100px;
-      }
-      .btn.active {
-        background: var(--primary);
-        color: white;
-        border-color: var(--primary);
-      }
-
-      /* Search Box */
-      .search-box {
-        position: relative;
-        margin-bottom: 1.5rem;
-        max-width: 400px;
-      }
-      .search-box input {
-        width: 100%;
-        padding: 0.75rem 1rem 0.75rem 2.75rem;
-        border: 2px solid var(--border);
-        border-radius: var(--radius);
-        font-size: 0.95rem;
-        transition: all 0.2s;
-      }
-      .search-box input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-      }
-      .search-box i {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-secondary);
-        font-size: 1.1rem;
-      }
 
       /* Main App Layout */
       .app-container {
@@ -451,16 +409,12 @@
 
       .page-header {
         margin-bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
       }
       .page-title {
         font-size: 1.875rem;
         font-weight: 700;
         color: var(--text);
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
         gap: 0.75rem;
@@ -471,12 +425,6 @@
       .page-subtitle {
         color: var(--text-secondary);
         font-size: 1rem;
-      }
-      .page-actions {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
       }
 
       /* Stats Grid - Modern Cards */
@@ -592,8 +540,6 @@
         justify-content: space-between;
         align-items: center;
         background: linear-gradient(to right, #fafafa, #ffffff);
-        flex-wrap: wrap;
-        gap: 1rem;
       }
       .card-title {
         font-size: 1.125rem;
@@ -882,17 +828,6 @@
         margin-top: 0.25rem;
       }
 
-      /* Vehicle List View */
-      .vehicle-list {
-        display: none;
-      }
-      .vehicle-list.active {
-        display: block;
-      }
-      .vehicle-grid.hidden {
-        display: none;
-      }
-
       /* Repair Items */
       .repair-item {
         background: var(--card);
@@ -932,13 +867,6 @@
         font-size: 1.5rem;
         font-weight: 700;
         color: var(--danger);
-      }
-      .repair-actions {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border);
       }
       .repair-parts-list {
         display: flex;
@@ -1042,59 +970,6 @@
         border: 1px solid #bfdbfe;
       }
 
-      /* View Toggle Buttons */
-      .view-toggle {
-        display: flex;
-        gap: 0.5rem;
-        background: var(--bg);
-        padding: 0.25rem;
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--border);
-      }
-      .view-toggle button {
-        padding: 0.5rem 1rem;
-        border: none;
-        background: transparent;
-        color: var(--text-secondary);
-        cursor: pointer;
-        border-radius: 6px;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .view-toggle button.active {
-        background: white;
-        color: var(--primary);
-        box-shadow: var(--shadow-sm);
-      }
-
-      /* Filter Tabs */
-      .filter-tabs {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-      }
-      .filter-tab {
-        padding: 0.5rem 1.25rem;
-        border: 2px solid var(--border);
-        background: white;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.2s;
-      }
-      .filter-tab:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-      }
-      .filter-tab.active {
-        background: var(--primary);
-        color: white;
-        border-color: var(--primary);
-      }
-
       /* Responsive */
       @media (max-width: 1024px) {
         .sidebar {
@@ -1135,10 +1010,78 @@
       .hidden {
         display: none !important;
       }
+
+      /* Password Toggle Button */
+      .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0.25rem;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s;
+      }
+
+      .password-toggle:hover {
+        background: #f1f5f9;
+        color: var(--primary);
+      }
+
+      .password-toggle:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+
+      /* Login Attempts Warning */
+      .login-attempts {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        color: #92400e;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .login-attempts.danger {
+        background: #fee2e2;
+        border-color: #fecaca;
+        color: #991b1b;
+      }
+
+      /* Button Loading State */
+      .btn-loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .btn-loading i {
+        animation: spin 0.8s linear infinite;
+      }
     </style>
     <base target="_blank" />
   </head>
   <body>
+    <!-- Login Page -->
     <!-- Login Page -->
     <div id="login-page" class="login-container">
       <div class="login-box">
@@ -1153,6 +1096,16 @@
           <span id="login-error-text"></span>
         </div>
 
+        <!-- Rate Limit Warning -->
+        <div
+          id="login-warning"
+          class="alert alert-warning hidden"
+          style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a"
+        >
+          <i class="fas fa-clock"></i>
+          <span id="login-warning-text"></span>
+        </div>
+
         <form id="login-form">
           <div class="form-group">
             <label>Username</label>
@@ -1163,6 +1116,7 @@
                 id="login-username"
                 required
                 placeholder="Enter your username"
+                autocomplete="username"
               />
             </div>
           </div>
@@ -1175,13 +1129,31 @@
                 id="login-password"
                 required
                 placeholder="Enter your password"
+                autocomplete="current-password"
               />
+              <button
+                type="button"
+                id="toggle-password"
+                class="password-toggle"
+                onclick="togglePasswordVisibility()"
+                title="Show/Hide Password"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
             </div>
           </div>
+
+          <!-- Login Attempts Counter -->
+          <div id="login-attempts" class="login-attempts hidden">
+            <i class="fas fa-info-circle"></i>
+            <span id="attempts-text"></span>
+          </div>
+
           <button
             type="submit"
             class="btn btn-primary"
             style="width: 100%; margin-top: 0.5rem"
+            id="login-button"
           >
             <i class="fas fa-sign-in-alt"></i>
             Sign In
@@ -1208,7 +1180,7 @@
               padding: 0.25rem 0.5rem;
               border-radius: 4px;
             "
-            >admin / admin123</code
+            >admin / Admin@123!</code
           >
         </div>
       </div>
@@ -1277,15 +1249,13 @@
         <!-- Dashboard Page -->
         <div id="page-dashboard" class="page">
           <div class="page-header">
-            <div>
-              <h1 class="page-title">
-                <i class="fas fa-chart-line"></i>
-                Dashboard
-              </h1>
-              <p class="page-subtitle">
-                Real-time overview of your fleet operations
-              </p>
-            </div>
+            <h1 class="page-title">
+              <i class="fas fa-chart-line"></i>
+              Dashboard
+            </h1>
+            <p class="page-subtitle">
+              Real-time overview of your fleet operations
+            </p>
           </div>
 
           <div class="stats-grid">
@@ -1391,31 +1361,13 @@
         <!-- Parts Page -->
         <div id="page-parts" class="page hidden">
           <div class="page-header">
-            <div>
-              <h1 class="page-title">
-                <i class="fas fa-boxes"></i>
-                Parts Inventory
-              </h1>
-              <p class="page-subtitle">
-                Manage your spare parts and inventory levels
-              </p>
-            </div>
-            <button
-              class="btn btn-primary admin-only mechanic-only hidden"
-              onclick="openModal('part-modal')"
-            >
-              <i class="fas fa-plus"></i> Add Part
-            </button>
-          </div>
-
-          <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input
-              type="text"
-              id="parts-search"
-              placeholder="Search parts by number, description, category or location..."
-              onkeyup="searchParts()"
-            />
+            <h1 class="page-title">
+              <i class="fas fa-boxes"></i>
+              Parts Inventory
+            </h1>
+            <p class="page-subtitle">
+              Manage your spare parts and inventory levels
+            </p>
           </div>
 
           <div class="card">
@@ -1424,6 +1376,12 @@
                 <i class="fas fa-warehouse"></i>
                 Inventory List
               </div>
+              <button
+                class="btn btn-primary admin-only mechanic-only hidden"
+                onclick="openModal('part-modal')"
+              >
+                <i class="fas fa-plus"></i> Add Part
+              </button>
             </div>
             <div class="table-container">
               <table>
@@ -1448,84 +1406,23 @@
         <!-- Fleet Page -->
         <div id="page-fleet" class="page hidden">
           <div class="page-header">
-            <div>
-              <h1 class="page-title">
-                <i class="fas fa-truck-moving"></i>
-                Fleet Management
-              </h1>
-              <p class="page-subtitle">Track and manage your vehicles</p>
-            </div>
-            <div class="page-actions">
-              <div class="view-toggle">
-                <button
-                  class="active"
-                  onclick="setFleetView('grid')"
-                  id="btn-grid-view"
-                >
-                  <i class="fas fa-th-large"></i> Cards
-                </button>
-                <button onclick="setFleetView('list')" id="btn-list-view">
-                  <i class="fas fa-list"></i> List
-                </button>
-              </div>
-              <button
-                class="btn btn-primary admin-only hidden"
-                onclick="openModal('truck-modal')"
-              >
-                <i class="fas fa-plus-circle"></i> Add Vehicle
-              </button>
-            </div>
+            <h1 class="page-title">
+              <i class="fas fa-truck-moving"></i>
+              Fleet Management
+            </h1>
+            <p class="page-subtitle">Track and manage your vehicles</p>
           </div>
 
-          <div class="search-box" style="max-width: 100%">
-            <i class="fas fa-search"></i>
-            <input
-              type="text"
-              id="fleet-search"
-              placeholder="Search vehicles by ID, name, VIN, make or model..."
-              onkeyup="searchFleet()"
-            />
-          </div>
-
-          <div class="filter-tabs">
-            <button class="filter-tab active" onclick="filterFleet('all')">
-              All Vehicles
-            </button>
-            <button class="filter-tab" onclick="filterFleet('truck')">
-              <i class="fas fa-truck"></i> Trucks Only
-            </button>
-            <button class="filter-tab" onclick="filterFleet('trailer')">
-              <i class="fas fa-trailer"></i> Trailers Only
+          <div style="margin-bottom: 1.5rem; text-align: right">
+            <button
+              class="btn btn-primary admin-only hidden"
+              onclick="openModal('truck-modal')"
+            >
+              <i class="fas fa-plus-circle"></i> Add Vehicle
             </button>
           </div>
 
-          <!-- Grid View -->
           <div class="vehicle-grid" id="fleet-grid"></div>
-
-          <!-- List View -->
-          <div class="vehicle-list" id="fleet-list">
-            <div class="card">
-              <div class="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Unit ID</th>
-                      <th>Name/Description</th>
-                      <th>Year</th>
-                      <th>Make</th>
-                      <th>Model</th>
-                      <th>Status</th>
-                      <th>Repairs</th>
-                      <th>Total Cost</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="fleet-list-table"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- Vehicle Detail Page -->
@@ -1556,13 +1453,14 @@
         <!-- Repairs Page -->
         <div id="page-repairs" class="page hidden">
           <div class="page-header">
-            <div>
-              <h1 class="page-title">
-                <i class="fas fa-wrench"></i>
-                Repair History
-              </h1>
-              <p class="page-subtitle">Track maintenance and repair records</p>
-            </div>
+            <h1 class="page-title">
+              <i class="fas fa-wrench"></i>
+              Repair History
+            </h1>
+            <p class="page-subtitle">Track maintenance and repair records</p>
+          </div>
+
+          <div style="margin-bottom: 1.5rem; text-align: right">
             <button
               class="btn btn-primary admin-only mechanic-only hidden"
               onclick="openRepairModal()"
@@ -1571,42 +1469,17 @@
             </button>
           </div>
 
-          <div class="search-box" style="max-width: 100%">
-            <i class="fas fa-search"></i>
-            <input
-              type="text"
-              id="repairs-search"
-              placeholder="Search repairs by vehicle, issue description, mechanic or parts used..."
-              onkeyup="searchRepairs()"
-            />
-          </div>
-
           <div id="repairs-list"></div>
         </div>
 
         <!-- User Management -->
         <div id="page-users" class="page hidden admin-only">
           <div class="page-header">
-            <div>
-              <h1 class="page-title">
-                <i class="fas fa-users-cog"></i>
-                User Management
-              </h1>
-              <p class="page-subtitle">Manage team access and permissions</p>
-            </div>
-            <button class="btn btn-primary" onclick="openModal('user-modal')">
-              <i class="fas fa-user-plus"></i> Create User
-            </button>
-          </div>
-
-          <div class="search-box" style="max-width: 100%">
-            <i class="fas fa-search"></i>
-            <input
-              type="text"
-              id="users-search"
-              placeholder="Search users by username, name, email or role..."
-              onkeyup="searchUsers()"
-            />
+            <h1 class="page-title">
+              <i class="fas fa-users-cog"></i>
+              User Management
+            </h1>
+            <p class="page-subtitle">Manage team access and permissions</p>
           </div>
 
           <div class="card">
@@ -1615,6 +1488,9 @@
                 <i class="fas fa-users"></i>
                 Team Members
               </div>
+              <button class="btn btn-primary" onclick="openModal('user-modal')">
+                <i class="fas fa-user-plus"></i> Create User
+              </button>
             </div>
             <div class="table-container">
               <table>
@@ -1642,16 +1518,6 @@
               Activity Logs
             </h1>
             <p class="page-subtitle">System activity and audit trail</p>
-          </div>
-
-          <div class="search-box" style="max-width: 100%">
-            <i class="fas fa-search"></i>
-            <input
-              type="text"
-              id="logs-search"
-              placeholder="Search logs by user, action or entity..."
-              onkeyup="searchLogs()"
-            />
           </div>
 
           <div class="card">
@@ -1774,16 +1640,7 @@
             </div>
           </form>
         </div>
-        <div
-          class="modal-footer"
-          style="
-            padding: 1.5rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-          "
-        >
+        <div class="modal-footer">
           <button class="btn btn-secondary" onclick="closeModal('part-modal')">
             <i class="fas fa-times"></i> Cancel
           </button>
@@ -1873,16 +1730,7 @@
             </div>
           </form>
         </div>
-        <div
-          class="modal-footer"
-          style="
-            padding: 1.5rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-          "
-        >
+        <div class="modal-footer">
           <button class="btn btn-secondary" onclick="closeModal('truck-modal')">
             <i class="fas fa-times"></i> Cancel
           </button>
@@ -1944,16 +1792,7 @@
             </div>
           </form>
         </div>
-        <div
-          class="modal-footer"
-          style="
-            padding: 1.5rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-          "
-        >
+        <div class="modal-footer">
           <button class="btn btn-secondary" onclick="closeModal('user-modal')">
             <i class="fas fa-times"></i> Cancel
           </button>
@@ -1970,7 +1809,7 @@
         <div class="modal-header">
           <div class="modal-title">
             <i class="fas fa-wrench"></i>
-            <span id="repair-modal-title">Log Repair</span>
+            Log Repair
           </div>
           <button class="modal-close" onclick="closeModal('repair-modal')">
             <i class="fas fa-times"></i>
@@ -1978,7 +1817,6 @@
         </div>
         <div class="modal-body" style="padding: 1.5rem">
           <form id="repair-form">
-            <input type="hidden" id="repair-id" name="repairId" value="" />
             <div class="form-section">
               <div class="form-section-title">
                 <i class="fas fa-info-circle"></i> Basic Information
@@ -2115,16 +1953,7 @@
             />
           </form>
         </div>
-        <div
-          class="modal-footer"
-          style="
-            padding: 1.5rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-          "
-        >
+        <div class="modal-footer">
           <button
             class="btn btn-secondary"
             onclick="closeModal('repair-modal')"
@@ -2145,14 +1974,128 @@
       let currentRepairParts = [];
       let availableParts = [];
       let currentVehicleId = null;
-      let fleetViewMode = "grid"; // 'grid' or 'list'
-      let fleetFilter = "all"; // 'all', 'truck', 'trailer'
-      let allParts = [];
-      let allFleet = [];
-      let allRepairs = [];
-      let allUsers = [];
-      let allLogs = [];
       const API = window.location.origin;
+
+      // Password Visibility Toggle
+      function togglePasswordVisibility() {
+        const passwordInput = document.getElementById("login-password");
+        const toggleBtn = document.getElementById("toggle-password");
+        const icon = toggleBtn.querySelector("i");
+
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+          toggleBtn.title = "Hide Password";
+        } else {
+          passwordInput.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+          toggleBtn.title = "Show Password";
+        }
+
+        passwordInput.focus();
+      }
+
+      // Clear login errors when user starts typing
+      document
+        .getElementById("login-username")
+        .addEventListener("input", clearLoginErrors);
+      document
+        .getElementById("login-password")
+        .addEventListener("input", clearLoginErrors);
+
+      function clearLoginErrors() {
+        document.getElementById("login-error").classList.add("hidden");
+        document.getElementById("login-warning").classList.add("hidden");
+        document.getElementById("login-attempts").classList.add("hidden");
+      }
+
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("login-username").value;
+          const password = document.getElementById("login-password").value;
+          const loginButton = document.getElementById("login-button");
+
+          // Clear previous errors
+          clearLoginErrors();
+
+          // Disable button during login
+          loginButton.disabled = true;
+          loginButton.classList.add("btn-loading");
+          const originalText = loginButton.innerHTML;
+          loginButton.innerHTML =
+            '<i class="fas fa-spinner"></i> Signing in...';
+
+          try {
+            const res = await fetch(`${API}/api/auth/login`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+              authToken = data.token;
+              currentUser = data.user;
+              localStorage.setItem("fleet_token", authToken);
+              showApp();
+            } else {
+              // Clear password field on error
+              document.getElementById("login-password").value = "";
+              document.getElementById("login-password").focus();
+
+              showLoginError(data.error || "Login failed");
+
+              if (data.locked) {
+                showLoginWarning(data.error);
+                document
+                  .getElementById("login-attempts")
+                  .classList.add("hidden");
+              } else if (data.remainingAttempts !== undefined) {
+                showLoginAttempts(data.remainingAttempts);
+              }
+            }
+          } catch (e) {
+            document.getElementById("login-password").value = "";
+            showLoginError("Network error");
+          } finally {
+            loginButton.disabled = false;
+            loginButton.classList.remove("btn-loading");
+            loginButton.innerHTML = originalText;
+          }
+        });
+
+      function showLoginError(msg) {
+        const el = document.getElementById("login-error");
+        document.getElementById("login-error-text").textContent = msg;
+        el.classList.remove("hidden");
+      }
+
+      function showLoginWarning(msg) {
+        const el = document.getElementById("login-warning");
+        document.getElementById("login-warning-text").textContent = msg;
+        el.classList.remove("hidden");
+      }
+
+      function showLoginAttempts(remaining) {
+        const el = document.getElementById("login-attempts");
+        const text = document.getElementById("attempts-text");
+
+        if (remaining === 0) {
+          text.textContent =
+            "This is your last attempt before temporary lockout!";
+          el.classList.add("danger");
+        } else {
+          text.textContent = `${remaining} login attempt${remaining !== 1 ? "s" : ""} remaining`;
+          el.classList.remove("danger");
+        }
+
+        el.classList.remove("hidden");
+      }
 
       if (authToken) validateToken();
 
@@ -2337,29 +2280,20 @@
         }
       }
 
-      // Parts Management with Search
       async function loadParts() {
         try {
           const parts = await api("/api/parts");
-          allParts = parts;
           availableParts = parts;
-          renderParts(parts);
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      function renderParts(parts) {
-        const tbody = document.getElementById("parts-table");
-        tbody.innerHTML = parts
-          .map((p) => {
-            const low = p.quantity <= p.minStock;
-            const stockIcon = low
-              ? '<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>'
-              : p.quantity === 0
-                ? '<i class="fas fa-times-circle" style="color: var(--danger);"></i>'
-                : '<i class="fas fa-check-circle" style="color: var(--success);"></i>';
-            return `
+          const tbody = document.getElementById("parts-table");
+          tbody.innerHTML = parts
+            .map((p) => {
+              const low = p.quantity <= p.minStock;
+              const stockIcon = low
+                ? '<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>'
+                : p.quantity === 0
+                  ? '<i class="fas fa-times-circle" style="color: var(--danger);"></i>'
+                  : '<i class="fas fa-check-circle" style="color: var(--success);"></i>';
+              return `
               <tr class="${low ? "low-stock" : ""}">
                 <td><strong><i class="fas fa-cog" style="color: var(--primary); margin-right: 0.5rem;"></i>${p.partNumber}</strong></td>
                 <td>${p.description}</td>
@@ -2378,23 +2312,11 @@
                 </td>
               </tr>
             `;
-          })
-          .join("");
-      }
-
-      function searchParts() {
-        const query = document
-          .getElementById("parts-search")
-          .value.toLowerCase();
-        const filtered = allParts.filter(
-          (p) =>
-            p.partNumber.toLowerCase().includes(query) ||
-            p.description.toLowerCase().includes(query) ||
-            p.category.toLowerCase().includes(query) ||
-            (p.location && p.location.toLowerCase().includes(query)) ||
-            (p.supplier && p.supplier.toLowerCase().includes(query)),
-        );
-        renderParts(filtered);
+            })
+            .join("");
+        } catch (e) {
+          console.error(e);
+        }
       }
 
       async function savePart() {
@@ -2431,59 +2353,21 @@
         }
       }
 
-      // Fleet Management with View Toggle and Search
       async function loadFleet() {
         try {
           const trucks = await api("/api/trucks");
-          allFleet = trucks;
-          renderFleet();
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      function renderFleet() {
-        let filtered = allFleet;
-
-        // Apply type filter
-        if (fleetFilter !== "all") {
-          filtered = filtered.filter((v) => v.type === fleetFilter);
-        }
-
-        // Apply search
-        const query =
-          document.getElementById("fleet-search")?.value.toLowerCase() || "";
-        if (query) {
-          filtered = filtered.filter(
-            (v) =>
-              v.truckId.toLowerCase().includes(query) ||
-              v.name.toLowerCase().includes(query) ||
-              (v.vin && v.vin.toLowerCase().includes(query)) ||
-              (v.make && v.make.toLowerCase().includes(query)) ||
-              (v.model && v.model.toLowerCase().includes(query)),
-          );
-        }
-
-        if (fleetViewMode === "grid") {
-          renderFleetGrid(filtered);
-        } else {
-          renderFleetList(filtered);
-        }
-      }
-
-      function renderFleetGrid(trucks) {
-        const grid = document.getElementById("fleet-grid");
-        grid.innerHTML = trucks
-          .map((t) => {
-            const typeIcon =
-              t.type === "truck" ? "fa-truck-moving" : "fa-trailer";
-            const statusColor =
-              t.status === "active"
-                ? "var(--success)"
-                : t.status === "maintenance"
-                  ? "var(--warning)"
-                  : "var(--danger)";
-            return `
+          const grid = document.getElementById("fleet-grid");
+          grid.innerHTML = trucks
+            .map((t) => {
+              const typeIcon =
+                t.type === "truck" ? "fa-truck-moving" : "fa-trailer";
+              const statusColor =
+                t.status === "active"
+                  ? "var(--success)"
+                  : t.status === "maintenance"
+                    ? "var(--warning)"
+                    : "var(--danger)";
+              return `
               <div class="vehicle-card" onclick="viewVehicle('${t.truckId}')">
                 <div class="vehicle-card-header">
                   <div class="vehicle-type-icon">
@@ -2521,86 +2405,11 @@
                 }
               </div>
             `;
-          })
-          .join("");
-      }
-
-      function renderFleetList(trucks) {
-        const tbody = document.getElementById("fleet-list-table");
-        tbody.innerHTML = trucks
-          .map((t) => {
-            const statusBadge =
-              t.status === "active"
-                ? '<span class="badge badge-success"><i class="fas fa-check"></i> Active</span>'
-                : t.status === "maintenance"
-                  ? '<span class="badge badge-warning"><i class="fas fa-wrench"></i> Maintenance</span>'
-                  : '<span class="badge badge-danger"><i class="fas fa-ban"></i> Retired</span>';
-            const typeIcon = t.type === "truck" ? "fa-truck" : "fa-trailer";
-            return `
-              <tr style="cursor: pointer;" onclick="viewVehicle('${t.truckId}')">
-                <td><i class="fas ${typeIcon}" style="color: var(--primary);"></i> ${t.type}</td>
-                <td><strong>${t.truckId}</strong></td>
-                <td>${t.name}</td>
-                <td>${t.year || "-"}</td>
-                <td>${t.make || "-"}</td>
-                <td>${t.model || "-"}</td>
-                <td>${statusBadge}</td>
-                <td><span class="badge badge-info">${t.repairCount}</span></td>
-                <td style="color: var(--danger); font-weight: 600;">$${Math.round(t.totalRepairCost).toLocaleString()}</td>
-                <td>
-                  <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); viewVehicle('${t.truckId}')">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  ${
-                    currentUser.role === "admin"
-                      ? `
-                  <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteTruck('${t._id}', '${t.truckId}')">
-                    <i class="fas fa-trash"></i>
-                  </button>`
-                      : ""
-                  }
-                </td>
-              </tr>
-            `;
-          })
-          .join("");
-      }
-
-      function setFleetView(mode) {
-        fleetViewMode = mode;
-        document
-          .getElementById("btn-grid-view")
-          .classList.toggle("active", mode === "grid");
-        document
-          .getElementById("btn-list-view")
-          .classList.toggle("active", mode === "list");
-
-        if (mode === "grid") {
-          document.getElementById("fleet-grid").classList.remove("hidden");
-          document.getElementById("fleet-list").classList.remove("active");
-        } else {
-          document.getElementById("fleet-grid").classList.add("hidden");
-          document.getElementById("fleet-list").classList.add("active");
+            })
+            .join("");
+        } catch (e) {
+          console.error(e);
         }
-        renderFleet();
-      }
-
-      function filterFleet(type) {
-        fleetFilter = type;
-        document.querySelectorAll(".filter-tab").forEach((tab) => {
-          tab.classList.remove("active");
-          if (
-            tab.textContent.toLowerCase().includes(type) ||
-            (type === "all" && tab.textContent.includes("All"))
-          ) {
-            tab.classList.add("active");
-          }
-        });
-        renderFleet();
-      }
-
-      function searchFleet() {
-        renderFleet();
       }
 
       async function saveTruck() {
@@ -2648,14 +2457,14 @@
             stats.truck.type === "truck" ? "fa-truck-moving" : "fa-trailer";
           const content = document.getElementById("vehicle-detail-content");
           content.innerHTML = `
-            <div class="vehicle-header" style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); padding: 2rem; border-radius: var(--radius); margin-bottom: 2rem; box-shadow: var(--shadow);">
+            <div class="vehicle-header" style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
               <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
                 <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
                   <i class="fas ${typeIcon}"></i>
                 </div>
                 <div>
-                  <div style="font-size: 1.5rem; font-weight: 700;">${stats.truck.name}</div>
-                  <div style="color: var(--text-secondary); display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.25rem;">
+                  <div class="vehicle-title">${stats.truck.name}</div>
+                  <div class="vehicle-meta">
                     <span><i class="fas fa-fingerprint"></i> ${stats.truck.truckId}</span>
                     <span><i class="fas fa-car-side"></i> ${stats.truck.type}</span>
                     <span><i class="fas fa-circle" style="color: ${stats.truck.status === "active" ? "var(--success)" : "var(--warning)"};"></i> ${stats.truck.status}</span>
@@ -2663,22 +2472,22 @@
                   </div>
                 </div>
               </div>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
-                <div style="text-align: center;">
-                  <div style="font-size: 0.875rem; color: var(--text-secondary); text-transform: uppercase;">Total Repairs</div>
-                  <div style="font-size: 1.5rem; font-weight: 700; color: var(--text);">${stats.truck.repairCount}</div>
+              <div class="cost-breakdown">
+                <div class="cost-item">
+                  <div class="cost-label"><i class="fas fa-wrench"></i> Total Repairs</div>
+                  <div class="cost-value" style="color: var(--text);">${stats.truck.repairCount}</div>
                 </div>
-                <div style="text-align: center;">
-                  <div style="font-size: 0.875rem; color: var(--text-secondary); text-transform: uppercase;">Parts Cost</div>
-                  <div style="font-size: 1.5rem; font-weight: 700; color: var(--text);">$${Math.round(stats.truck.totalPartsCost).toLocaleString()}</div>
+                <div class="cost-item">
+                  <div class="cost-label"><i class="fas fa-box"></i> Parts Cost</div>
+                  <div class="cost-value">$${Math.round(stats.truck.totalPartsCost).toLocaleString()}</div>
                 </div>
-                <div style="text-align: center;">
-                  <div style="font-size: 0.875rem; color: var(--text-secondary); text-transform: uppercase;">Labor Cost</div>
-                  <div style="font-size: 1.5rem; font-weight: 700; color: var(--text);">$${Math.round(stats.truck.totalLaborCost).toLocaleString()}</div>
+                <div class="cost-item">
+                  <div class="cost-label"><i class="fas fa-user-clock"></i> Labor Cost</div>
+                  <div class="cost-value">$${Math.round(stats.truck.totalLaborCost).toLocaleString()}</div>
                 </div>
-                <div style="text-align: center;">
-                  <div style="font-size: 0.875rem; color: var(--text-secondary); text-transform: uppercase;">Total Spent</div>
-                  <div style="font-size: 2rem; font-weight: 700; color: var(--danger);">$${Math.round(stats.truck.totalRepairCost).toLocaleString()}</div>
+                <div class="cost-item">
+                  <div class="cost-label"><i class="fas fa-calculator"></i> Total Spent</div>
+                  <div class="cost-value" style="font-size: 2rem;">$${Math.round(stats.truck.totalRepairCost).toLocaleString()}</div>
                 </div>
               </div>
             </div>
@@ -2729,39 +2538,28 @@
         else openRepairModal();
       }
 
-      // Repairs Management with Edit/Delete and Search
       async function loadRepairs() {
         try {
           const repairs = await api("/api/repairs");
-          allRepairs = repairs;
-          renderRepairs(repairs);
-        } catch (e) {
-          console.error(e);
-        }
-      }
+          const container = document.getElementById("repairs-list");
+          if (!repairs.length) {
+            container.innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-clipboard-check"></i>
+                <h3>No Repairs Yet</h3>
+                <p>Start by logging your first repair record</p>
+                ${
+                  currentUser.role !== "driver" && currentUser.role !== "viewer"
+                    ? `<button class="btn btn-primary" onclick="openRepairModal()" style="margin-top: 1rem;"><i class="fas fa-plus"></i> Log Repair</button>`
+                    : ""
+                }
+              </div>`;
+            return;
+          }
 
-      function renderRepairs(repairs) {
-        const container = document.getElementById("repairs-list");
-        if (!repairs.length) {
-          container.innerHTML = `
-            <div class="empty-state">
-              <i class="fas fa-clipboard-check"></i>
-              <h3>No Repairs Found</h3>
-              <p>${document.getElementById("repairs-search")?.value ? "No repairs match your search" : "Start by logging your first repair record"}</p>
-              ${
-                currentUser.role !== "driver" &&
-                currentUser.role !== "viewer" &&
-                !document.getElementById("repairs-search")?.value
-                  ? `<button class="btn btn-primary" onclick="openRepairModal()" style="margin-top: 1rem;"><i class="fas fa-plus"></i> Log Repair</button>`
-                  : ""
-              }
-            </div>`;
-          return;
-        }
-
-        container.innerHTML = repairs
-          .map(
-            (r) => `
+          container.innerHTML = repairs
+            .map(
+              (r) => `
             <div class="repair-item">
               <div class="repair-header">
                 <div class="repair-vehicle">
@@ -2799,134 +2597,17 @@
                   : ""
               }
               ${r.notes ? `<div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.875rem;"><i class="fas fa-sticky-note"></i> ${r.notes}</div>` : ""}
-
-              <div class="repair-actions">
-                ${
-                  currentUser.role === "admin" ||
-                  currentUser.role === "mechanic"
-                    ? `
-                  <button class="btn btn-sm btn-secondary" onclick="editRepair('${r._id}')">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                `
-                    : ""
-                }
-                ${
-                  currentUser.role === "admin"
-                    ? `
-                  <button class="btn btn-sm btn-danger" onclick="deleteRepair('${r._id}')">
-                    <i class="fas fa-trash"></i> Delete
-                  </button>
-                `
-                    : ""
-                }
-              </div>
             </div>
           `,
-          )
-          .join("");
-      }
-
-      function searchRepairs() {
-        const query = document
-          .getElementById("repairs-search")
-          .value.toLowerCase();
-        const filtered = allRepairs.filter(
-          (r) =>
-            (r.truckName || r.truckId).toLowerCase().includes(query) ||
-            r.issue.toLowerCase().includes(query) ||
-            (r.mechanic && r.mechanic.toLowerCase().includes(query)) ||
-            (r.partsUsed &&
-              r.partsUsed.some((p) =>
-                p.partNumber.toLowerCase().includes(query),
-              )),
-        );
-        renderRepairs(filtered);
-      }
-
-      async function editRepair(repairId) {
-        try {
-          const repair = await api(`/api/repairs/${repairId}`);
-          currentRepairParts = repair.partsUsed || [];
-
-          // Store original parts for inventory management
-          window.originalRepairParts = JSON.parse(
-            JSON.stringify(currentRepairParts),
-          );
-
-          document.getElementById("repair-id").value = repairId;
-          document.getElementById("repair-modal-title").textContent =
-            "Edit Repair";
-
-          // Load vehicles dropdown
-          const trucks = await api("/api/trucks");
-          const truckSelect = document.getElementById("repair-truck-select");
-          truckSelect.innerHTML =
-            '<option value="">Select Vehicle...</option>' +
-            trucks
-              .map(
-                (t) =>
-                  `<option value="${t.truckId}" ${repair.truckId === t.truckId ? "selected" : ""}>${t.truckId} - ${t.name}</option>`,
-              )
-              .join("");
-
-          // Set form values
-          document.querySelector('#repair-form [name="date"]').value =
-            repair.date.split("T")[0];
-          document.querySelector('#repair-form [name="issue"]').value =
-            repair.issue;
-          document.querySelector('#repair-form [name="laborHours"]').value =
-            repair.laborHours || 0;
-          document.querySelector('#repair-form [name="laborRate"]').value =
-            repair.laborRate || 75;
-          document.querySelector('#repair-form [name="mechanic"]').value =
-            repair.mechanic || "";
-          document.querySelector('#repair-form [name="notes"]').value =
-            repair.notes || "";
-
-          // Load parts dropdown
-          const parts = await api("/api/parts");
-          availableParts = parts;
-          const partSelect = document.getElementById("temp-part-select");
-          partSelect.innerHTML =
-            '<option value="">Select Part...</option>' +
-            parts
-              .map(
-                (p) =>
-                  `<option value="${p._id}" data-cost="${p.cost || 0}" data-number="${p.partNumber}">${p.partNumber} - ${p.description} (Stock: ${p.quantity})</option>`,
-              )
-              .join("");
-
-          updatePartsList();
-          calculateRepairTotal();
-          openModal("repair-modal");
+            )
+            .join("");
         } catch (e) {
-          showAlert("Failed to load repair for editing", "error");
-        }
-      }
-
-      async function deleteRepair(repairId) {
-        if (!confirm("Are you sure you want to delete this repair record?"))
-          return;
-        try {
-          await api(`/api/repairs/${repairId}`, { method: "DELETE" });
-          loadRepairs();
-          loadDashboard();
-          showAlert("Repair deleted successfully!", "success");
-        } catch (e) {
-          showAlert("Failed to delete repair: " + e.message, "error");
+          console.error(e);
         }
       }
 
       async function openRepairModal(preselectedTruckId = null) {
         try {
-          // Reset form for new repair
-          document.getElementById("repair-form").reset();
-          document.getElementById("repair-id").value = "";
-          document.getElementById("repair-modal-title").textContent =
-            "Log Repair";
-          window.originalRepairParts = [];
-
           currentRepairParts = [];
           updatePartsList();
           const [trucks, parts] = await Promise.all([
@@ -2981,32 +2662,22 @@
         const part = availableParts.find((p) => p._id === partId);
         if (!part) return;
 
-        // Check available stock considering current repair parts if editing
-        const existingInCurrent = currentRepairParts.find(
-          (p) => p.partId === partId,
-        );
-        const totalNeeded =
-          quantity + (existingInCurrent ? existingInCurrent.quantity : 0);
-
-        // If editing, we need to consider that original parts will be returned to stock
-        const originalPart = window.originalRepairParts
-          ? window.originalRepairParts.find((p) => p.partId === partId)
-          : null;
-        const availableStock =
-          part.quantity + (originalPart ? originalPart.quantity : 0);
-
-        if (availableStock < totalNeeded) {
+        if (part.quantity < quantity) {
           showAlert(
-            `Insufficient stock. Only ${availableStock} available`,
+            `Insufficient stock. Only ${part.quantity} available`,
             "error",
           );
           return;
         }
 
-        if (existingInCurrent) {
-          existingInCurrent.quantity += quantity;
-          existingInCurrent.totalCost =
-            existingInCurrent.unitCost * existingInCurrent.quantity;
+        const existingIndex = currentRepairParts.findIndex(
+          (p) => p.partId === partId,
+        );
+        if (existingIndex >= 0) {
+          currentRepairParts[existingIndex].quantity += quantity;
+          currentRepairParts[existingIndex].totalCost =
+            currentRepairParts[existingIndex].unitCost *
+            currentRepairParts[existingIndex].quantity;
         } else {
           currentRepairParts.push({
             partId: part._id,
@@ -3091,8 +2762,6 @@
       async function saveRepair() {
         const form = document.getElementById("repair-form");
         const formData = Object.fromEntries(new FormData(form));
-        const isEdit = formData.repairId ? true : false;
-
         const data = {
           truckId: formData.truckId,
           date: formData.date,
@@ -3110,55 +2779,37 @@
         }
 
         try {
-          if (isEdit) {
-            await api(`/api/repairs/${formData.repairId}`, {
-              method: "PUT",
-              body: JSON.stringify(data),
-            });
-            showAlert("Repair updated successfully!", "success");
-          } else {
-            await api("/api/repairs", {
-              method: "POST",
-              body: JSON.stringify(data),
-            });
-            showAlert("Repair logged successfully!", "success");
-          }
-
+          await api("/api/repairs", {
+            method: "POST",
+            body: JSON.stringify(data),
+          });
           closeModal("repair-modal");
           form.reset();
           currentRepairParts = [];
           loadRepairs();
           loadDashboard();
           if (currentVehicleId) viewVehicle(currentVehicleId);
+          showAlert("Repair logged successfully!", "success");
         } catch (e) {
           showAlert(e.message, "error");
         }
       }
 
-      // Users Management with Search
       async function loadUsers() {
         try {
           const users = await api("/api/users");
-          allUsers = users;
-          renderUsers(users);
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      function renderUsers(users) {
-        const tbody = document.getElementById("users-table");
-        tbody.innerHTML = users
-          .map((u) => {
-            const roleIcon =
-              u.role === "admin"
-                ? "fa-shield-alt"
-                : u.role === "mechanic"
-                  ? "fa-wrench"
-                  : u.role === "driver"
-                    ? "fa-truck"
-                    : "fa-eye";
-            return `
+          const tbody = document.getElementById("users-table");
+          tbody.innerHTML = users
+            .map((u) => {
+              const roleIcon =
+                u.role === "admin"
+                  ? "fa-shield-alt"
+                  : u.role === "mechanic"
+                    ? "fa-wrench"
+                    : u.role === "driver"
+                      ? "fa-truck"
+                      : "fa-eye";
+              return `
               <tr>
                 <td><strong><i class="fas fa-user" style="color: var(--primary); margin-right: 0.5rem;"></i>${u.username}</strong></td>
                 <td>${u.name || "-"}</td>
@@ -3180,22 +2831,11 @@
                 </td>
               </tr>
             `;
-          })
-          .join("");
-      }
-
-      function searchUsers() {
-        const query = document
-          .getElementById("users-search")
-          .value.toLowerCase();
-        const filtered = allUsers.filter(
-          (u) =>
-            u.username.toLowerCase().includes(query) ||
-            (u.name && u.name.toLowerCase().includes(query)) ||
-            (u.email && u.email.toLowerCase().includes(query)) ||
-            u.role.toLowerCase().includes(query),
-        );
-        renderUsers(filtered);
+            })
+            .join("");
+        } catch (e) {
+          console.error(e);
+        }
       }
 
       async function toggleUser(userId, isActive) {
@@ -3241,36 +2881,26 @@
         }
       }
 
-      // Activity Logs with Search
       async function loadLogs() {
         try {
           const logs = await api("/api/activity-logs");
-          allLogs = logs;
-          renderLogs(logs);
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      function renderLogs(logs) {
-        const tbody = document.getElementById("logs-table");
-        tbody.innerHTML = logs
-          .map((l) => {
-            const actionIcons = {
-              CREATE_USER: "fa-user-plus",
-              USER_ENABLED: "fa-check-circle",
-              USER_DISABLED: "fa-ban",
-              USER_DELETED: "fa-user-times",
-              CREATE_PART: "fa-box",
-              DELETE_PART: "fa-trash",
-              CREATE_TRUCK: "fa-truck",
-              DELETE_TRUCK: "fa-trash",
-              CREATE_REPAIR: "fa-wrench",
-              UPDATE_REPAIR: "fa-edit",
-              DELETE_REPAIR: "fa-trash",
-            };
-            const icon = actionIcons[l.action] || "fa-circle";
-            return `
+          const tbody = document.getElementById("logs-table");
+          tbody.innerHTML = logs
+            .map((l) => {
+              const actionIcons = {
+                CREATE_USER: "fa-user-plus",
+                USER_ENABLED: "fa-check-circle",
+                USER_DISABLED: "fa-ban",
+                USER_DELETED: "fa-user-times",
+                CREATE_PART: "fa-box",
+                DELETE_PART: "fa-trash",
+                CREATE_TRUCK: "fa-truck",
+                DELETE_TRUCK: "fa-trash",
+                CREATE_REPAIR: "fa-wrench",
+                DELETE_REPAIR: "fa-trash",
+              };
+              const icon = actionIcons[l.action] || "fa-circle";
+              return `
               <tr>
                 <td><i class="fas fa-clock" style="color: var(--text-secondary);"></i> ${new Date(l.timestamp).toLocaleString()}</td>
                 <td><i class="fas fa-user" style="color: var(--primary);"></i> ${l.username}</td>
@@ -3278,22 +2908,11 @@
                 <td>${l.entityType}: ${l.entityId}</td>
               </tr>
             `;
-          })
-          .join("");
-      }
-
-      function searchLogs() {
-        const query = document
-          .getElementById("logs-search")
-          .value.toLowerCase();
-        const filtered = allLogs.filter(
-          (l) =>
-            l.username.toLowerCase().includes(query) ||
-            l.action.toLowerCase().includes(query) ||
-            l.entityType.toLowerCase().includes(query) ||
-            l.entityId.toLowerCase().includes(query),
-        );
-        renderLogs(filtered);
+            })
+            .join("");
+        } catch (e) {
+          console.error(e);
+        }
       }
 
       function openModal(id) {
@@ -3309,9 +2928,6 @@
         if (id === "repair-modal") {
           currentRepairParts = [];
           updatePartsList();
-          document.getElementById("repair-modal-title").textContent =
-            "Log Repair";
-          window.originalRepairParts = [];
         }
       }
 
@@ -3321,6 +2937,23 @@
         div.innerHTML = `<i class="fas ${type === "success" ? "fa-check-circle" : "fa-exclamation-circle"}"></i> <span>${msg}</span>`;
         document.getElementById("app-alerts").appendChild(div);
         setTimeout(() => div.remove(), 5000);
+      }
+
+      async function exportData() {
+        try {
+          const data = await api("/api/export");
+          const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `fleet-export-${new Date().toISOString().split("T")[0]}.json`;
+          a.click();
+          showAlert("Data exported successfully!", "success");
+        } catch (e) {
+          showAlert("Export failed", "error");
+        }
       }
 
       document.addEventListener("keydown", (e) => {
